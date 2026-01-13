@@ -23,13 +23,11 @@ A premium, dark-mode personal finance dashboard built with React and Vite to hel
 
 ```
 goceng/
-└── apps/
-    └── web/                 # Main React Application
-        ├── src/
-        │   ├── components/  # Reusable UI components
-        │   ├── layouts/     # Page layouts (Auth, Dashboard)
-        │   └── pages/       # Application views
-        └── ...
+  ├── src/
+  │   ├── components/  # Reusable UI components
+  │   ├── layouts/     # Page layouts (Auth, Dashboard)
+  │   └── pages/       # Application views
+  └── ...
 ```
 
 ## ⚡ Getting Started
