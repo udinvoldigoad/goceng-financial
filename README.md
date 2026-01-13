@@ -36,13 +36,12 @@ goceng/
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/YOUR_USERNAME/goceng.git
+    git clone https://github.com/udinvoldigoad/goceng-financial.git
     cd goceng
     ```
 
 2.  **Install Dependencies**
     ```bash
-    cd apps/web
     npm install
     ```
 
