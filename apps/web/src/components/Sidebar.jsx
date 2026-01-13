@@ -1,0 +1,97 @@
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+
+const navItems = [
+    { name: 'Dashboard', icon: 'grid_view', path: '/' },
+    { name: 'Aset', icon: 'account_balance_wallet', path: '/assets' },
+    { name: 'Transaksi', icon: 'receipt_long', path: '/transactions' },
+    { name: 'Anggaran', icon: 'pie_chart', path: '/budget' },
+    { name: 'Goals', icon: 'flag', path: '/goals' },
+    { name: 'Laporan', icon: 'description', path: '/reports' },
+];
+
+export default function Sidebar() {
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    return (
+        <aside className="flex w-64 flex-col border-r border-border-dark bg-sidebar-bg transition-colors duration-300 h-screen">
+            <div className="flex flex-col h-full p-4">
+                {/* Logo */}
+                <div className="flex gap-3 items-center px-2 pt-2 mb-8">
+                    <div className="bg-primary flex items-center justify-center rounded-full size-10 text-white font-bold text-xl">
+                        G
+                    </div>
+                    <div className="flex flex-col">
+                        <h1 className="text-base font-bold leading-none text-white">Goceng</h1>
+                        <p className="text-text-muted text-xs font-normal mt-1">Pencatat Keuangan</p>
+                    </div>
+                </div>
+
+                {/* Navigation */}
+                <nav className="flex flex-col gap-2 flex-1">
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.name}
+                            to={item.path}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive
+                                    ? 'text-white bg-primary shadow-lg shadow-primary/20'
+                                    : 'text-text-muted hover:text-white hover:bg-white/5'
+                                }`
+                            }
+                        >
+                            <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                            <p className="text-sm font-medium leading-normal">{item.name}</p>
+                        </NavLink>
+                    ))}
+                </nav>
+
+                {/* Bottom Section */}
+                <div className="flex flex-col gap-3 mt-auto relative">
+                    {/* Settings Popup */}
+                    {isSettingsOpen && (
+                        <div className="absolute bottom-full left-0 mb-2 w-full bg-sidebar-card-bg rounded-xl border border-border-dark shadow-xl overflow-hidden z-50 animate-fade-in">
+                            <NavLink
+                                to="/profile"
+                                className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-white/5 hover:text-white transition-colors"
+                                onClick={() => setIsSettingsOpen(false)}
+                            >
+                                <span className="material-symbols-outlined text-[20px]">person</span>
+                                <p className="text-sm font-medium leading-normal">Profil</p>
+                            </NavLink>
+                            <NavLink
+                                to="/settings"
+                                className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-white/5 hover:text-white transition-colors border-t border-border-dark"
+                                onClick={() => setIsSettingsOpen(false)}
+                            >
+                                <span className="material-symbols-outlined text-[20px]">settings</span>
+                                <p className="text-sm font-medium leading-normal">Pengaturan</p>
+                            </NavLink>
+                        </div>
+                    )}
+
+                    {/* Profile Card */}
+                    <div
+                        className="bg-sidebar-card-bg rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:bg-surface-highlight transition-colors"
+                        onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                    >
+                        <div className="bg-gray-600 rounded-full size-10 shrink-0 overflow-hidden">
+                            <img
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCgbulcB0M9cILVXQceQfzLp-PXgZzRQV2DrR2LdPSB7x6LL17D3FWLRg7-jDGJv5tWL9iUWDJKmK5rPfvEUSaqYaVz6Vp7tjHtkwzUZ6tGyWTjc0ro-Yu-UfYaLR_dGcLmasvBnkK_qS7vA9fmTKh-zOt6Neq3np-cjrDKGdfUY2H3A7zoDMeC_I8DPGDEqx96JtiK0VSKMsGKna-Ykm01CBwXX5j2kyqOjWYXrmslT9bYFFqtmSrNrGct7ieEpe_wXR-kx5TAPZT"
+                            />
+                        </div>
+                        <div className="flex flex-col overflow-hidden">
+                            <p className="text-sm font-bold truncate text-white">Udin Petot</p>
+                            <p className="text-text-muted text-xs truncate">udin@goceng.id</p>
+                        </div>
+                        <span className="material-symbols-outlined text-text-muted ml-auto text-[18px]">
+                            {isSettingsOpen ? 'expand_less' : 'expand_more'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    );
+}
