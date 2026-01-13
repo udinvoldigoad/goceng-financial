@@ -1,16 +1,64 @@
-# React + Vite
+# Goceng Finance Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium, dark-mode personal finance dashboard built with React and Vite to help users track expenses, income, and assets.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Modern Dashboard**: Real-time overview of total assets, income vs expense charts, and recent transactions.
+- **Wallet Management**: Track multiple wallets (Bank, E-Wallet, Cash, Savings) with visual cards.
+- **Transaction History**: Detailed list of transactions grouped by date with filtering capabilities.
+- **Budget Tracking**: Visual budget limits and progress bars for different spending categories.
+- **Dark Mode UI**: Sleek, glassmorphism-inspired design with premium dark theme.
+- **Responsive Design**: optimized for various screen sizes.
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend Framework**: [React](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Icons**: [Material Symbols](https://fonts.google.com/icons)
+- **Deployment**: NPM Monorepo structure
 
-## Expanding the ESLint configuration
+## 📂 Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+goceng/
+└── apps/
+    └── web/                 # Main React Application
+        ├── src/
+        │   ├── components/  # Reusable UI components
+        │   ├── layouts/     # Page layouts (Auth, Dashboard)
+        │   └── pages/       # Application views
+        └── ...
+```
+
+## ⚡ Getting Started
+
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/goceng.git
+    cd goceng
+    ```
+
+2.  **Install Dependencies**
+    ```bash
+    cd apps/web
+    npm install
+    ```
+
+3.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
+
+4.  **Open in Browser**
+    Visit `http://localhost:5173` to see the application.
+
+## 👤 Author
+
+**Goceng Financial**
+Build by **Udin Voldigoad**
+
+## 📄 License
+
+Protected by 256-bit SSL encryption (Mock). © 2025 Goceng Financial.
