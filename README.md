@@ -1,4 +1,4 @@
-# Goceng Finance Tracker
+# Goceng Finance Tracker ( in progress )
 
 A premium, dark-mode personal finance dashboard built with React and Vite to help users track expenses, income, and assets.
 
