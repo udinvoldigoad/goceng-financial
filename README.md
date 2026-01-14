@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Goceng - Personal Finance Tracker
+=======
+# Goceng Finance Tracker ( in progress )
+>>>>>>> a33f036af16c1ef24760873f11d3c1226860eee7
 
 A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 
@@ -23,6 +27,7 @@ A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 - Visual progress bars with alerts when near/exceeding limits
 - Derived spending automatically calculated from transactions
 
+<<<<<<< HEAD
 ### 🎯 Financial Goals
 - Create savings goals with target amounts
 - Add contributions to track progress
@@ -68,16 +73,38 @@ npm install
 
 # Start development server
 npm run dev
+=======
+```
+goceng/
+  ├── src/
+  │   ├── components/  # Reusable UI components
+  │   ├── layouts/     # Page layouts (Auth, Dashboard)
+  │   └── pages/       # Application views
+  └── ...
+>>>>>>> a33f036af16c1ef24760873f11d3c1226860eee7
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+<<<<<<< HEAD
 ### Build for Production
 
 ```bash
 npm run build
 npm run preview
 ```
+=======
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/udinvoldigoad/goceng-financial.git
+    cd goceng
+    ```
+
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+>>>>>>> a33f036af16c1ef24760873f11d3c1226860eee7
 
 ## Data Persistence
 
