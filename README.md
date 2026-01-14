@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # Goceng - Personal Finance Tracker
-=======
-# Goceng Finance Tracker ( in progress )
->>>>>>> a33f036af16c1ef24760873f11d3c1226860eee7
 
 A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 
