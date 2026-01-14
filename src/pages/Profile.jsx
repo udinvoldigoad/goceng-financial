@@ -42,12 +42,7 @@ export default function Profile() {
                                 src={user?.avatar || "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"}
                             />
                         </div>
-                        <button
-                            onClick={handleEditClick}
-                            className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg hover:bg-primary/90 transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-sm">edit</span>
-                        </button>
+
                     </div>
                     <div className="text-center md:text-left flex-1">
                         <div className="flex flex-col md:flex-row items-center gap-3">

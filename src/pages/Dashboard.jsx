@@ -9,6 +9,7 @@ import FormattedNumberInput from '../components/ui/FormattedNumberInput';
 
 export default function Dashboard() {
     const {
+        user,
         wallets,
         assets,
         transactions,
@@ -68,7 +69,7 @@ export default function Dashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Halo, Admin 👋</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Halo, {user?.name ? user.name.split(' ')[0] : 'Admin'} 👋</h1>
                     <p className="mt-1 md:mt-2 text-sm md:text-base text-text-muted">Selamat datang kembali! Berikut ringkasan keuanganmu.</p>
                 </div>
             </div>
