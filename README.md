@@ -1,4 +1,4 @@
-# Goceng - Personal Finance Tracker
+# Goceng - Personal Finance Tracker (Does not support mobile display yet)
 
 A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 
