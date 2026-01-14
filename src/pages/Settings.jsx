@@ -1,53 +1,231 @@
+import { useState } from 'react';
+import useStore from '../store/useStore';
+import { generateDemoData } from '../services/demoData';
+import { exportDataJson } from '../services/exportCsv';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
+import { toast } from '../components/ui/Toast';
+
 export default function Settings() {
+    const {
+        settings,
+        toggleTheme,
+        updateSettings,
+        resetAllData,
+        exportData,
+        wallets,
+        assets,
+        transactions,
+        budgets,
+        goals,
+        subscriptions,
+    } = useStore();
+
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [showSeedConfirm, setShowSeedConfirm] = useState(false);
+
+    const handleExportData = () => {
+        const data = exportData();
+        exportDataJson(JSON.parse(data), 'goceng-backup');
+        toast.success('Data berhasil diexport!');
+    };
+
+    const handleResetData = () => {
+        resetAllData();
+        toast.success('Semua data berhasil dihapus!');
+        setShowResetConfirm(false);
+    };
+
+    const handleSeedDemoData = () => {
+        const demoData = generateDemoData();
+
+        // Import demo data into store
+        const store = useStore.getState();
+
+        // Add demo wallets
+        demoData.wallets.forEach(wallet => {
+            store.wallets.push(wallet);
+        });
+
+        // Add demo assets
+        demoData.assets.forEach(asset => {
+            store.assets.push(asset);
+        });
+
+        // Add demo transactions
+        demoData.transactions.forEach(tx => {
+            store.transactions.push(tx);
+        });
+
+        // Add demo budgets
+        demoData.budgets.forEach(budget => {
+            store.budgets.push(budget);
+        });
+
+        // Add demo goals
+        demoData.goals.forEach(goal => {
+            store.goals.push(goal);
+        });
+
+        // Add demo subscriptions
+        demoData.subscriptions.forEach(sub => {
+            store.subscriptions.push(sub);
+        });
+
+        // Force re-render by updating settings
+        updateSettings({ demoLoaded: true });
+
+        toast.success('Data demo berhasil dimuat!');
+        setShowSeedConfirm(false);
+    };
+
+    const hasData = wallets.length > 0 || transactions.length > 0 || budgets.length > 0 || goals.length > 0;
+
     return (
         <div className="max-w-6xl mx-auto">
-            <h1 className="text-2xl font-bold text-white mb-4">Pengaturan</h1>
-            <div className="space-y-4">
+            <h1 className="text-2xl font-bold text-white mb-6">Pengaturan</h1>
+
+            <div className="space-y-6">
+                {/* Preferences */}
                 <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
                     <h3 className="font-bold text-white mb-4">Preferensi</h3>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight">
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-text-muted">dark_mode</span>
-                                <span className="text-white">Dark Mode</span>
+                                <div>
+                                    <span className="text-white">Dark Mode</span>
+                                    <p className="text-xs text-text-muted">Tema gelap lebih nyaman untuk mata</p>
+                                </div>
                             </div>
-                            <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
-                                <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight">
-                            <div className="flex items-center gap-3">
-                                <span className="material-symbols-outlined text-text-muted">notifications</span>
-                                <span className="text-white">Notifikasi</span>
-                            </div>
-                            <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
-                                <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-                            </div>
+                            <button
+                                onClick={toggleTheme}
+                                className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors ${settings.theme === 'dark' ? 'bg-primary' : 'bg-surface-dark border border-border-dark'
+                                    }`}
+                            >
+                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings.theme === 'dark' ? 'right-1' : 'left-1'
+                                    }`}></div>
+                            </button>
                         </div>
                         <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight">
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-text-muted">language</span>
-                                <span className="text-white">Bahasa</span>
+                                <div>
+                                    <span className="text-white">Bahasa</span>
+                                    <p className="text-xs text-text-muted">Bahasa aplikasi</p>
+                                </div>
                             </div>
                             <span className="text-text-muted">Indonesia</span>
                         </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-text-muted">attach_money</span>
+                                <div>
+                                    <span className="text-white">Mata Uang</span>
+                                    <p className="text-xs text-text-muted">Format mata uang</p>
+                                </div>
+                            </div>
+                            <span className="text-text-muted">IDR (Rp)</span>
+                        </div>
                     </div>
                 </div>
+
+                {/* Data Management */}
                 <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <h3 className="font-bold text-white mb-4">Akun</h3>
-                    <div className="space-y-2">
-                        <button className="w-full text-left p-3 rounded-lg bg-surface-highlight hover:bg-surface-highlight/80 transition-colors text-white">
-                            Ubah Password
+                    <h3 className="font-bold text-white mb-4">Kelola Data</h3>
+                    <div className="space-y-3">
+                        <button
+                            onClick={handleExportData}
+                            className="w-full text-left p-3 rounded-lg bg-surface-highlight hover:bg-surface-highlight/80 transition-colors text-white flex items-center gap-3"
+                        >
+                            <span className="material-symbols-outlined text-text-muted">download</span>
+                            <div>
+                                <span>Export Data</span>
+                                <p className="text-xs text-text-muted">Download semua data sebagai file JSON</p>
+                            </div>
                         </button>
-                        <button className="w-full text-left p-3 rounded-lg bg-surface-highlight hover:bg-surface-highlight/80 transition-colors text-white">
-                            Export Data
-                        </button>
-                        <button className="w-full text-left p-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors text-red-400">
-                            Logout
+
+                        {!hasData && (
+                            <button
+                                onClick={() => setShowSeedConfirm(true)}
+                                className="w-full text-left p-3 rounded-lg bg-surface-highlight hover:bg-surface-highlight/80 transition-colors text-white flex items-center gap-3"
+                            >
+                                <span className="material-symbols-outlined text-primary">science</span>
+                                <div>
+                                    <span className="text-primary">Muat Data Demo</span>
+                                    <p className="text-xs text-text-muted">Muat contoh data untuk mencoba aplikasi</p>
+                                </div>
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Storage Info */}
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
+                    <h3 className="font-bold text-white mb-4">Penyimpanan</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="p-3 rounded-lg bg-surface-highlight">
+                            <p className="text-2xl font-bold text-white">{wallets.length}</p>
+                            <p className="text-xs text-text-muted">Wallet</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-surface-highlight">
+                            <p className="text-2xl font-bold text-white">{transactions.length}</p>
+                            <p className="text-xs text-text-muted">Transaksi</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-surface-highlight">
+                            <p className="text-2xl font-bold text-white">{budgets.length}</p>
+                            <p className="text-xs text-text-muted">Anggaran</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-surface-highlight">
+                            <p className="text-2xl font-bold text-white">{goals.length}</p>
+                            <p className="text-xs text-text-muted">Goals</p>
+                        </div>
+                    </div>
+                    <p className="text-xs text-text-muted">
+                        Data disimpan secara lokal di browser Anda menggunakan localStorage.
+                    </p>
+                </div>
+
+                {/* Danger Zone */}
+                <div className="bg-surface-dark border border-red-500/30 rounded-2xl p-5">
+                    <h3 className="font-bold text-red-400 mb-4 flex items-center gap-2">
+                        <span className="material-symbols-outlined">warning</span>
+                        Zona Berbahaya
+                    </h3>
+                    <div className="space-y-3">
+                        <button
+                            onClick={() => setShowResetConfirm(true)}
+                            className="w-full text-left p-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors text-red-400 flex items-center gap-3"
+                        >
+                            <span className="material-symbols-outlined">delete_forever</span>
+                            <div>
+                                <span>Hapus Semua Data</span>
+                                <p className="text-xs text-red-400/70">Menghapus semua data secara permanen</p>
+                            </div>
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* Reset Confirmation */}
+            <ConfirmDialog
+                isOpen={showResetConfirm}
+                onClose={() => setShowResetConfirm(false)}
+                onConfirm={handleResetData}
+                title="Hapus Semua Data?"
+                message="Tindakan ini akan menghapus semua wallet, transaksi, anggaran, goals, dan pengaturan Anda secara permanen. Data tidak dapat dikembalikan."
+                confirmLabel="Ya, Hapus Semua"
+                danger
+            />
+
+            {/* Seed Demo Confirmation */}
+            <ConfirmDialog
+                isOpen={showSeedConfirm}
+                onClose={() => setShowSeedConfirm(false)}
+                onConfirm={handleSeedDemoData}
+                title="Muat Data Demo?"
+                message="Ini akan menambahkan contoh wallet, transaksi, anggaran, dan goals untuk mencoba fitur aplikasi."
+                confirmLabel="Ya, Muat Demo"
+            />
         </div>
     );
 }
