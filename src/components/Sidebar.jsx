@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import useStore from '../store/useStore';
 
 const navItems = [
     { name: 'Dashboard', icon: 'grid_view', path: '/' },
@@ -11,6 +12,7 @@ const navItems = [
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
+    const { user } = useStore();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     return (
@@ -92,12 +94,12 @@ export default function Sidebar({ isOpen, onClose }) {
                             <img
                                 alt="Profile"
                                 className="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCgbulcB0M9cILVXQceQfzLp-PXgZzRQV2DrR2LdPSB7x6LL17D3FWLRg7-jDGJv5tWL9iUWDJKmK5rPfvEUSaqYaVz6Vp7tjHtkwzUZ6tGyWTjc0ro-Yu-UfYaLR_dGcLmasvBnkK_qS7vA9fmTKh-zOt6Neq3np-cjrDKGdfUY2H3A7zoDMeC_I8DPGDEqx96JtiK0VSKMsGKna-Ykm01CBwXX5j2kyqOjWYXrmslT9bYFFqtmSrNrGct7ieEpe_wXR-kx5TAPZT"
+                                src={user?.avatar || "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"}
                             />
                         </div>
                         <div className="flex flex-col overflow-hidden">
-                            <p className="text-sm font-bold truncate text-white">Udin Petot</p>
-                            <p className="text-text-muted text-xs truncate">udin@goceng.id</p>
+                            <p className="text-sm font-bold truncate text-white">{user?.name || 'User'}</p>
+                            <p className="text-text-muted text-xs truncate">{user?.email || 'email@example.com'}</p>
                         </div>
                         <span className="material-symbols-outlined text-text-muted ml-auto text-[18px]">
                             {isSettingsOpen ? 'expand_less' : 'expand_more'}

@@ -32,6 +32,11 @@ const initialState = {
     goals: [],
     subscriptions: [],
     notifications: [],
+    user: {
+        name: 'Udin Petot',
+        email: 'udin@goceng.id',
+        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCCgbulcB0M9cILVXQceQfzLp-PXgZzRQV2DrR2LdPSB7x6LL17D3FWLRg7-jDGJv5tWL9iUWDJKmK5rPfvEUSaqYaVz6Vp7tjHtkwzUZ6tGyWTjc0ro-Yu-UfYaLR_dGcLmasvBnkK_qS7vA9fmTKh-zOt6Neq3np-cjrDKGdfUY2H3A7zoDMeC_I8DPGDEqx96JtiK0VSKMsGKna-Ykm01CBwXX5j2kyqOjWYXrmslT9bYFFqtmSrNrGct7ieEpe_wXR-kx5TAPZT',
+    },
     settings: {
         theme: 'dark',
         currency: 'IDR',
@@ -399,6 +404,13 @@ export const useStore = create(
             updateSettings: (updates) => {
                 set((state) => ({
                     settings: { ...state.settings, ...updates },
+                }));
+            },
+
+            // ==================== USER ACTIONS ====================
+            updateUser: (updates) => {
+                set((state) => ({
+                    user: { ...state.user, ...updates },
                 }));
             },
 
