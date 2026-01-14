@@ -1,9 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import useStore from '../../store/useStore';
 import Modal from '../ui/Modal';
 import { toast } from '../ui/Toast';
+import FormattedNumberInput from '../ui/FormattedNumberInput';
 
 const goalSchema = z.object({
     name: z.string().min(1, 'Nama goal wajib diisi'),
@@ -42,6 +43,7 @@ export default function GoalForm({ isOpen, onClose, goal = null }) {
         reset,
         watch,
         setValue,
+        control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(goalSchema),
@@ -115,8 +117,8 @@ export default function GoalForm({ isOpen, onClose, goal = null }) {
                                 type="button"
                                 onClick={() => setValue('icon', item.icon)}
                                 className={`p-2 rounded-lg border transition-colors ${selectedIcon === item.icon
-                                        ? 'bg-primary/20 border-primary text-primary'
-                                        : 'bg-surface-highlight border-border-dark text-text-muted hover:border-primary/50'
+                                    ? 'bg-primary/20 border-primary text-primary'
+                                    : 'bg-surface-highlight border-border-dark text-text-muted hover:border-primary/50'
                                     }`}
                                 title={item.label}
                             >
@@ -131,11 +133,17 @@ export default function GoalForm({ isOpen, onClose, goal = null }) {
                     <label className="block text-sm font-medium text-text-muted mb-1.5">
                         Target Amount
                     </label>
-                    <input
-                        type="number"
-                        {...register('targetAmount')}
-                        className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="e.g. 10000000"
+                    <Controller
+                        name="targetAmount"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <FormattedNumberInput
+                                value={value}
+                                onChange={onChange}
+                                className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="e.g. 10.000.000"
+                            />
+                        )}
                     />
                     {errors.targetAmount && (
                         <p className="mt-1 text-sm text-red-400">{errors.targetAmount.message}</p>
@@ -147,11 +155,17 @@ export default function GoalForm({ isOpen, onClose, goal = null }) {
                         <label className="block text-sm font-medium text-text-muted mb-1.5">
                             Current Amount
                         </label>
-                        <input
-                            type="number"
-                            {...register('currentAmount')}
-                            className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                            placeholder="0"
+                        <Controller
+                            name="currentAmount"
+                            control={control}
+                            render={({ field: { onChange, value } }) => (
+                                <FormattedNumberInput
+                                    value={value}
+                                    onChange={onChange}
+                                    className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                                    placeholder="0"
+                                />
+                            )}
                         />
                     </div>
                 )}

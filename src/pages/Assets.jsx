@@ -98,41 +98,41 @@ export default function Assets() {
                         <h2 className="text-lg font-bold text-white">Your Accounts</h2>
                         <span className="text-sm text-text-muted">{wallets.length} wallet</span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                         {/* Primary Card */}
                         {primaryWallet && (
-                            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#005c97] to-[#363795] p-6 shadow-xl transition-transform hover:-translate-y-1">
+                            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#005c97] to-[#363795] p-4 md:p-6 shadow-xl transition-transform hover:-translate-y-1 col-span-2 md:col-span-1">
                                 <div className="absolute right-[-20px] top-[-20px] h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
-                                <div className="flex flex-col justify-between h-48">
+                                <div className="flex flex-col justify-between h-40 md:h-48">
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
-                                            <p className="text-white/80 text-sm font-medium">
+                                            <p className="text-white/80 text-[10px] md:text-sm font-medium">
                                                 {getWalletTypeById(primaryWallet.type)?.name || 'Account'}
                                             </p>
-                                            <h3 className="text-white text-xl font-bold mt-1">{primaryWallet.name}</h3>
+                                            <h3 className="text-white text-base md:text-xl font-bold mt-1 truncate max-w-[150px]">{primaryWallet.name}</h3>
                                         </div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1 md:gap-2">
                                             <button
                                                 onClick={() => setEditingWallet(primaryWallet)}
                                                 className="text-white/70 hover:text-white transition-colors"
                                             >
-                                                <span className="material-symbols-outlined text-[20px]">edit</span>
+                                                <span className="material-symbols-outlined text-[18px] md:text-[20px]">edit</span>
                                             </button>
-                                            <div className="h-8 w-12 bg-white/20 rounded-md flex items-center justify-center backdrop-blur-sm">
-                                                <span className="material-symbols-outlined text-white">contactless</span>
+                                            <div className="h-6 w-10 md:h-8 md:w-12 bg-white/20 rounded-md flex items-center justify-center backdrop-blur-sm">
+                                                <span className="material-symbols-outlined text-white text-[16px] md:text-[24px]">contactless</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-2 md:gap-4">
                                         {primaryWallet.accountNumber && (
-                                            <p className="text-white/70 text-lg tracking-widest font-mono">
-                                                **** **** **** {primaryWallet.accountNumber}
+                                            <p className="text-white/70 text-xs md:text-lg tracking-widest font-mono">
+                                                **** {primaryWallet.accountNumber.slice(-4)}
                                             </p>
                                         )}
                                         <div className="flex justify-between items-end">
                                             <div className="flex flex-col">
-                                                <p className="text-white/60 text-xs uppercase">Balance</p>
-                                                <p className="text-white text-2xl font-bold">
+                                                <p className="text-white/60 text-[10px] md:text-xs uppercase">Balance</p>
+                                                <p className="text-white text-xl md:text-2xl font-bold truncate">
                                                     {showBalance ? formatCurrency(primaryWallet.balance) : '••••••••'}
                                                 </p>
                                             </div>
@@ -146,37 +146,37 @@ export default function Assets() {
                         {(primaryWallet ? otherWallets : wallets).map((wallet) => {
                             const walletType = getWalletTypeById(wallet.type);
                             return (
-                                <div key={wallet.id} className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-border-dark p-6 shadow-lg transition-transform hover:-translate-y-1">
-                                    <div className="flex flex-col justify-between h-48">
-                                        <div className="flex justify-between items-center">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`h-10 w-10 rounded-full bg-${wallet.color || 'cyan'}-500/20 flex items-center justify-center text-${wallet.color || 'cyan'}-400`}>
-                                                    <span className="material-symbols-outlined">{wallet.icon || walletType?.icon || 'account_balance_wallet'}</span>
+                                <div key={wallet.id} className="group relative overflow-hidden rounded-2xl bg-surface-dark border border-border-dark p-3 md:p-6 shadow-lg transition-transform hover:-translate-y-1">
+                                    <div className="flex flex-col justify-between h-36 md:h-48">
+                                        <div className="flex justify-between items-start md:items-center">
+                                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 min-w-0">
+                                                <div className={`h-8 w-8 md:h-10 md:w-10 rounded-full bg-${wallet.color || 'cyan'}-500/20 flex items-center justify-center text-${wallet.color || 'cyan'}-400 shrink-0`}>
+                                                    <span className="material-symbols-outlined text-[18px] md:text-[24px]">{wallet.icon || walletType?.icon || 'account_balance_wallet'}</span>
                                                 </div>
-                                                <div>
-                                                    <h3 className="text-white font-bold">{wallet.name}</h3>
-                                                    <p className="text-text-muted text-xs">{walletType?.name || wallet.type}</p>
+                                                <div className="min-w-0">
+                                                    <h3 className="text-white font-bold text-xs md:text-base truncate">{wallet.name}</h3>
+                                                    <p className="text-text-muted text-[10px] md:text-xs truncate">{walletType?.name || wallet.type}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center gap-0 md:gap-1 absolute top-3 right-3 md:relative md:top-0 md:right-0 bg-surface-dark/50 md:bg-transparent rounded-lg backdrop-blur-sm md:backdrop-filter-none">
                                                 <button
                                                     onClick={() => setEditingWallet(wallet)}
                                                     className="text-text-muted hover:text-white transition-colors p-1"
                                                 >
-                                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                                    <span className="material-symbols-outlined text-[16px] md:text-[20px]">edit</span>
                                                 </button>
                                                 <button
                                                     onClick={() => setDeletingWallet(wallet)}
                                                     className="text-text-muted hover:text-red-400 transition-colors p-1"
                                                 >
-                                                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                                                    <span className="material-symbols-outlined text-[16px] md:text-[20px]">delete</span>
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="my-4 border-t border-dashed border-border-dark"></div>
-                                        <div className="flex flex-col gap-1">
-                                            <p className="text-text-muted text-xs uppercase">Available Balance</p>
-                                            <p className="text-white text-2xl font-bold">
+                                        <div className="my-2 md:my-4 border-t border-dashed border-border-dark"></div>
+                                        <div className="flex flex-col gap-0 md:gap-1">
+                                            <p className="text-text-muted text-[10px] md:text-xs uppercase">Available</p>
+                                            <p className="text-white text-base md:text-2xl font-bold truncate">
                                                 {showBalance ? formatCurrency(wallet.balance) : '••••••••'}
                                             </p>
                                         </div>
@@ -188,12 +188,12 @@ export default function Assets() {
                         {/* Add Wallet Card */}
                         <div
                             onClick={() => setShowAddWallet(true)}
-                            className="group relative rounded-2xl bg-surface-dark border border-dashed border-border-dark p-6 flex flex-col items-center justify-center min-h-[200px] cursor-pointer hover:border-primary/50 hover:bg-surface-highlight/30 transition-all"
+                            className="group relative rounded-2xl bg-surface-dark border border-dashed border-border-dark p-3 md:p-6 flex flex-col items-center justify-center min-h-[160px] md:min-h-[200px] cursor-pointer hover:border-primary/50 hover:bg-surface-highlight/30 transition-all"
                         >
-                            <div className="h-12 w-12 rounded-full bg-surface-highlight flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-3">
+                            <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-surface-highlight flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-2 md:mb-3">
                                 <span className="material-symbols-outlined text-2xl">add</span>
                             </div>
-                            <p className="text-text-muted font-medium group-hover:text-white transition-colors">Tambah Wallet</p>
+                            <p className="text-text-muted font-medium text-xs md:text-base group-hover:text-white transition-colors text-center">Tambah Wallet</p>
                         </div>
                     </div>
                 </section>

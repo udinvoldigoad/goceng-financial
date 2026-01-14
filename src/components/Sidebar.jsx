@@ -10,20 +10,26 @@ const navItems = [
     { name: 'Laporan', icon: 'description', path: '/reports' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     return (
-        <aside className="flex w-64 flex-col border-r border-border-dark bg-sidebar-bg transition-colors duration-300 h-screen">
+        <aside className={`
+            fixed inset-y-0 left-0 z-50 w-64 flex-col border-r border-border-dark bg-sidebar-bg transition-transform duration-300 h-screen
+            md:relative md:translate-x-0
+            ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}>
             <div className="flex flex-col h-full p-4">
                 {/* Logo */}
-                <div className="flex gap-3 items-center px-2 pt-2 mb-8">
-                    <div className="bg-primary flex items-center justify-center rounded-full size-10 text-white font-bold text-xl">
-                        G
-                    </div>
-                    <div className="flex flex-col">
-                        <h1 className="text-base font-bold leading-none text-white">Goceng</h1>
-                        <p className="text-text-muted text-xs font-normal mt-1">Pencatat Keuangan</p>
+                <div className="flex gap-3 items-center px-2 pt-2 mb-8 justify-between">
+                    <div className="flex gap-3 items-center">
+                        <div className="bg-primary flex items-center justify-center rounded-full size-10 text-white font-bold text-xl">
+                            G
+                        </div>
+                        <div className="flex flex-col">
+                            <h1 className="text-base font-bold leading-none text-white">Goceng</h1>
+                            <p className="text-text-muted text-xs font-normal mt-1">Pencatat Keuangan</p>
+                        </div>
                     </div>
                 </div>
 
@@ -33,6 +39,7 @@ export default function Sidebar() {
                         <NavLink
                             key={item.name}
                             to={item.path}
+                            onClick={() => onClose && onClose()}
                             className={({ isActive }) =>
                                 `flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive
                                     ? 'text-white bg-primary shadow-lg shadow-primary/20'
@@ -54,7 +61,10 @@ export default function Sidebar() {
                             <NavLink
                                 to="/profile"
                                 className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-white/5 hover:text-white transition-colors"
-                                onClick={() => setIsSettingsOpen(false)}
+                                onClick={() => {
+                                    setIsSettingsOpen(false);
+                                    if (onClose) onClose();
+                                }}
                             >
                                 <span className="material-symbols-outlined text-[20px]">person</span>
                                 <p className="text-sm font-medium leading-normal">Profil</p>
@@ -62,7 +72,10 @@ export default function Sidebar() {
                             <NavLink
                                 to="/settings"
                                 className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-white/5 hover:text-white transition-colors border-t border-border-dark"
-                                onClick={() => setIsSettingsOpen(false)}
+                                onClick={() => {
+                                    setIsSettingsOpen(false);
+                                    if (onClose) onClose();
+                                }}
                             >
                                 <span className="material-symbols-outlined text-[20px]">settings</span>
                                 <p className="text-sm font-medium leading-normal">Pengaturan</p>

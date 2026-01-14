@@ -19,13 +19,16 @@
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--color-background-dark);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-surface-highlight);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #2c424d;
 }

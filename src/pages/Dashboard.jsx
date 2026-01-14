@@ -68,45 +68,45 @@ export default function Dashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Halo, Admin 👋</h1>
-                    <p className="mt-2 text-base text-text-muted">Selamat datang kembali! Berikut ringkasan keuanganmu.</p>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Halo, Admin 👋</h1>
+                    <p className="mt-1 md:mt-2 text-sm md:text-base text-text-muted">Selamat datang kembali! Berikut ringkasan keuanganmu.</p>
                 </div>
             </div>
 
             {/* Summary Cards */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
                 {/* Total Assets Card */}
-                <div className="relative overflow-hidden rounded-2xl bg-surface-dark p-8 shadow-sm ring-1 ring-white/5 transition-all">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                <div className="relative overflow-hidden rounded-2xl bg-surface-dark p-5 md:p-8 shadow-sm ring-1 ring-white/5 transition-all">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
                         <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
                                 <p className="text-sm font-medium text-text-muted">Total Aset</p>
                             </div>
-                            <h3 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">
+                            <h3 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-1">
                                 {formatCurrency(totalAssets)}
                             </h3>
-                            <div className="mt-4 flex items-center gap-2">
-                                <span className="text-sm text-text-muted">
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs md:text-sm text-text-muted">
                                     {wallets.length} wallet • {assets.length} aset
                                 </span>
                             </div>
                         </div>
-                        <div className="flex flex-col sm:flex-row lg:items-center gap-8 lg:border-l lg:border-white/10 lg:pl-10">
-                            <div className="min-w-[180px]">
-                                <div className="flex items-center justify-between">
-                                    <p className="text-xs font-medium text-text-muted">Pemasukan Harian</p>
+                        <div className="grid grid-cols-2 gap-4 lg:flex lg:flex-col lg:items-center lg:gap-8 lg:border-l lg:border-white/10 lg:pl-10">
+                            <div className="min-w-0 lg:min-w-[180px]">
+                                <div className="flex items-center gap-2 lg:justify-between mb-1">
+                                    <p className="text-xs font-medium text-text-muted">Pemasukan</p>
                                     <span className="material-symbols-outlined text-green-500 text-sm">arrow_downward</span>
                                 </div>
-                                <h3 className="mt-1 text-xl font-bold tracking-tight text-white">
+                                <h3 className="text-base lg:text-xl font-bold tracking-tight text-white truncate">
                                     +{formatCurrency(dailyIncome)}
                                 </h3>
                             </div>
-                            <div className="min-w-[180px]">
-                                <div className="flex items-center justify-between">
-                                    <p className="text-xs font-medium text-text-muted">Pengeluaran Harian</p>
+                            <div className="min-w-0 lg:min-w-[180px]">
+                                <div className="flex items-center gap-2 lg:justify-between mb-1">
+                                    <p className="text-xs font-medium text-text-muted">Pengeluaran</p>
                                     <span className="material-symbols-outlined text-red-500 text-sm">arrow_upward</span>
                                 </div>
-                                <h3 className="mt-1 text-xl font-bold tracking-tight text-white">
+                                <h3 className="text-base lg:text-xl font-bold tracking-tight text-white truncate">
                                     -{formatCurrency(dailyExpense)}
                                 </h3>
                             </div>
@@ -115,29 +115,29 @@ export default function Dashboard() {
                 </div>
 
                 {/* Monthly Income/Expense Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
-                        <div className="flex items-start justify-between">
+                <div className="grid grid-cols-2 gap-3 md:gap-6">
+                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-4 md:p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
                             <div>
-                                <p className="text-sm font-medium text-text-muted">Pemasukan Bulan Ini</p>
-                                <h3 className="mt-2 text-2xl font-bold tracking-tight text-white">
+                                <p className="text-xs md:text-sm font-medium text-text-muted mb-1">Pemasukan Bulan Ini</p>
+                                <h3 className="text-base md:text-2xl font-bold tracking-tight text-white break-all">
                                     +{formatCurrency(monthlyIncome)}
                                 </h3>
                             </div>
-                            <div className="rounded-lg bg-green-900/20 p-2 text-green-400">
+                            <div className="hidden md:block rounded-lg bg-green-900/20 p-2 text-green-400 self-start">
                                 <span className="material-symbols-outlined">calendar_month</span>
                             </div>
                         </div>
                     </div>
-                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
-                        <div className="flex items-start justify-between">
+                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-4 md:p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
                             <div>
-                                <p className="text-sm font-medium text-text-muted">Pengeluaran Bulan Ini</p>
-                                <h3 className="mt-2 text-2xl font-bold tracking-tight text-white">
+                                <p className="text-xs md:text-sm font-medium text-text-muted mb-1">Pengeluaran Bulan Ini</p>
+                                <h3 className="text-base md:text-2xl font-bold tracking-tight text-white break-all">
                                     -{formatCurrency(monthlyExpense)}
                                 </h3>
                             </div>
-                            <div className="rounded-lg bg-red-900/20 p-2 text-red-400">
+                            <div className="hidden md:block rounded-lg bg-red-900/20 p-2 text-red-400 self-start">
                                 <span className="material-symbols-outlined">credit_score</span>
                             </div>
                         </div>
@@ -169,8 +169,8 @@ export default function Dashboard() {
                             <div className="mt-1 w-full bg-surface-highlight rounded-full h-1.5 overflow-hidden">
                                 <div
                                     className={`h-full rounded-full transition-all duration-500 ${budgetPercentage >= 100 ? 'bg-red-500' :
-                                            budgetPercentage >= 80 ? 'bg-orange-500' :
-                                                'bg-primary'
+                                        budgetPercentage >= 80 ? 'bg-orange-500' :
+                                            'bg-primary'
                                         }`}
                                     style={{ width: `${Math.min(budgetPercentage, 100)}%` }}
                                 ></div>
@@ -259,7 +259,7 @@ export default function Dashboard() {
                                             </div>
                                         </div>
                                         <span className={`text-sm font-semibold shrink-0 ${tx.type === 'income' ? 'text-green-400' :
-                                                tx.type === 'transfer' ? 'text-blue-400' : 'text-white'
+                                            tx.type === 'transfer' ? 'text-blue-400' : 'text-white'
                                             }`}>
                                             {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                                         </span>

@@ -8,6 +8,7 @@ export default function DashboardLayout() {
     const { notifications, markAllNotificationsRead, clearNotifications } = useStore();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [showNotifications, setShowNotifications] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const notificationRef = useRef(null);
 
     const unreadCount = notifications.filter(n => !n.read).length;
@@ -47,10 +48,28 @@ export default function DashboardLayout() {
 
     return (
         <div className="flex h-screen w-full bg-background-dark text-text-main font-display overflow-hidden">
-            <Sidebar />
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
+            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
             <main className="flex-1 flex flex-col h-full overflow-hidden relative">
                 {/* Header */}
-                <header className="w-full flex items-center justify-between px-8 py-5 border-b border-border-dark bg-surface-dark/50 backdrop-blur-sm z-30">
+                <header className="w-full flex items-center justify-between px-4 md:px-8 py-5 border-b border-border-dark bg-surface-dark/50 backdrop-blur-sm z-30">
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            className="md:hidden text-text-muted hover:text-white"
+                        >
+                            <span className="material-symbols-outlined">menu</span>
+                        </button>
+                    </div>
+
                     <div className="flex items-center gap-4 flex-1 justify-end relative">
                         <div className="hidden md:flex items-center gap-3 text-text-muted bg-surface-dark px-4 py-2 rounded-lg border border-border-dark/50">
                             <span className="material-symbols-outlined text-[20px]">calendar_today</span>

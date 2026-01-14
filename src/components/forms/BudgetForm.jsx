@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { EXPENSE_CATEGORIES } from '../../models/categories';
@@ -6,6 +6,7 @@ import useStore from '../../store/useStore';
 import Modal from '../ui/Modal';
 import { toast } from '../ui/Toast';
 import { getCurrentMonth } from '../../services/formatters';
+import FormattedNumberInput from '../ui/FormattedNumberInput';
 
 const budgetSchema = z.object({
     category: z.string().min(1, 'Kategori wajib dipilih'),
@@ -28,6 +29,7 @@ export default function BudgetForm({ isOpen, onClose, budget = null }) {
         register,
         handleSubmit,
         reset,
+        control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(budgetSchema),
@@ -130,11 +132,17 @@ export default function BudgetForm({ isOpen, onClose, budget = null }) {
                     <label className="block text-sm font-medium text-text-muted mb-1.5">
                         Limit Anggaran
                     </label>
-                    <input
-                        type="number"
-                        {...register('monthlyLimit')}
-                        className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="e.g. 3000000"
+                    <Controller
+                        name="monthlyLimit"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <FormattedNumberInput
+                                value={value}
+                                onChange={onChange}
+                                className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="e.g. 3.000.000"
+                            />
+                        )}
                     />
                     {errors.monthlyLimit && (
                         <p className="mt-1 text-sm text-red-400">{errors.monthlyLimit.message}</p>

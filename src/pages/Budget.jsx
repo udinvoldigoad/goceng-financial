@@ -130,69 +130,69 @@ export default function Budget() {
                     onAction={() => setShowAddBudget(true)}
                 />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-8">
                     {budgetsWithSpent.map((budget) => {
                         const category = getCategoryById(budget.category);
                         return (
-                            <div key={budget.id} className="bg-surface-dark border border-border-dark rounded-2xl p-5 relative group hover:border-border-dark/80 transition-all">
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`h-10 w-10 rounded-xl bg-${budget.color || 'blue'}-500/20 flex items-center justify-center text-${budget.color || 'blue'}-400`}>
-                                            <span className="material-symbols-outlined">{budget.icon || category?.icon || 'pie_chart'}</span>
+                            <div key={budget.id} className="bg-surface-dark border border-border-dark rounded-2xl p-3 md:p-5 relative group hover:border-border-dark/80 transition-all">
+                                <div className="flex items-start justify-between mb-3 md:mb-4">
+                                    <div className="flex items-center gap-2 md:gap-3">
+                                        <div className={`h-8 w-8 md:h-10 md:w-10 rounded-xl bg-${budget.color || 'blue'}-500/20 flex items-center justify-center text-${budget.color || 'blue'}-400 shrink-0`}>
+                                            <span className="material-symbols-outlined text-[18px] md:text-[24px]">{budget.icon || category?.icon || 'pie_chart'}</span>
                                         </div>
-                                        <div>
-                                            <h3 className="font-bold text-white">{category?.name || budget.category}</h3>
-                                            <p className="text-xs text-text-muted">{formatMonth(budget.month)}</p>
+                                        <div className="min-w-0">
+                                            <h3 className="font-bold text-white text-xs md:text-base truncate">{category?.name || budget.category}</h3>
+                                            <p className="text-[10px] md:text-xs text-text-muted truncate">{formatMonth(budget.month)}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-0 md:gap-1 absolute top-3 right-3 md:relative md:top-0 md:right-0 bg-surface-dark/50 md:bg-transparent rounded-lg backdrop-blur-sm md:backdrop-filter-none">
                                         <button
                                             onClick={() => setEditingBudget(budget)}
-                                            className="text-text-muted hover:text-white transition-colors p-1 opacity-0 group-hover:opacity-100"
+                                            className="text-text-muted hover:text-white transition-colors p-1"
                                         >
-                                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                                            <span className="material-symbols-outlined text-[16px] md:text-[20px]">edit</span>
                                         </button>
                                         <button
                                             onClick={() => setDeletingBudget(budget)}
-                                            className="text-text-muted hover:text-red-400 transition-colors p-1 opacity-0 group-hover:opacity-100"
+                                            className="text-text-muted hover:text-red-400 transition-colors p-1"
                                         >
-                                            <span className="material-symbols-outlined text-[20px]">delete</span>
+                                            <span className="material-symbols-outlined text-[16px] md:text-[20px]">delete</span>
                                         </button>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs text-text-muted">Terpakai</span>
-                                    <span className={`text-sm font-bold ${budget.percentage >= 90 ? 'text-red-400' : 'text-white'}`}>
+                                <div className="flex items-center justify-between mb-1 md:mb-2">
+                                    <span className="text-[10px] md:text-xs text-text-muted">Terpakai</span>
+                                    <span className={`text-xs md:text-sm font-bold ${budget.percentage >= 90 ? 'text-red-400' : 'text-white'}`}>
                                         {budget.percentage}%
                                     </span>
                                 </div>
 
-                                <div className="w-full bg-surface-highlight rounded-full h-2 mb-4 overflow-hidden">
+                                <div className="w-full bg-surface-highlight rounded-full h-1.5 md:h-2 mb-3 md:mb-4 overflow-hidden">
                                     <div
-                                        className={`h-2 rounded-full transition-all ${getProgressColor(budget.percentage)}`}
+                                        className={`h-full rounded-full transition-all ${getProgressColor(budget.percentage)}`}
                                         style={{ width: `${Math.min(budget.percentage, 100)}%` }}
                                     ></div>
                                 </div>
 
                                 {budget.percentage >= 90 && (
-                                    <div className="mb-4 p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                                        <p className="text-xs text-red-400">
+                                    <div className="mb-3 md:mb-4 p-1.5 md:p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                                        <p className="text-[10px] md:text-xs text-red-400 truncate">
                                             {budget.percentage >= 100 ? '⚠️ Anggaran terlampaui!' : '⚠️ Hampir mencapai batas!'}
                                         </p>
                                     </div>
                                 )}
 
-                                <div className="flex justify-between text-sm">
-                                    <div>
-                                        <p className="text-text-muted text-xs">Sisa Anggaran</p>
-                                        <p className={`font-bold ${budget.remaining <= 0 ? 'text-red-400' : 'text-white'}`}>
+                                <div className="flex justify-between text-xs md:text-sm">
+                                    <div className="min-w-0">
+                                        <p className="text-text-muted text-[10px] md:text-xs truncate">Sisa Anggaran</p>
+                                        <p className={`font-bold truncate text-xs md:text-base ${budget.remaining <= 0 ? 'text-red-400' : 'text-white'}`}>
                                             {formatCurrency(Math.max(budget.remaining, 0))}
                                         </p>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-text-muted text-xs">Total Limit</p>
-                                        <p className="font-medium text-text-muted">{formatCurrency(budget.monthlyLimit)}</p>
+                                    <div className="text-right min-w-0">
+                                        <p className="text-text-muted text-[10px] md:text-xs truncate">Total Limit</p>
+                                        <p className="font-medium text-text-muted truncate text-xs md:text-base">{formatCurrency(budget.monthlyLimit)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -202,12 +202,12 @@ export default function Budget() {
                     {/* Add Category Card */}
                     <div
                         onClick={() => setShowAddBudget(true)}
-                        className="bg-surface-dark border border-dashed border-border-dark rounded-2xl p-5 flex flex-col items-center justify-center min-h-[200px] cursor-pointer hover:border-primary/50 hover:bg-surface-highlight/30 transition-all group"
+                        className="bg-surface-dark border border-dashed border-border-dark rounded-2xl p-3 md:p-5 flex flex-col items-center justify-center min-h-[160px] md:min-h-[200px] cursor-pointer hover:border-primary/50 hover:bg-surface-highlight/30 transition-all group"
                     >
-                        <div className="h-12 w-12 rounded-full bg-surface-highlight flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-3">
+                        <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-surface-highlight flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-2 md:mb-3">
                             <span className="material-symbols-outlined text-2xl">add</span>
                         </div>
-                        <p className="text-text-muted font-medium group-hover:text-white transition-colors">Tambah Kategori</p>
+                        <p className="text-text-muted font-medium text-xs md:text-base group-hover:text-white transition-colors text-center">Tambah Kategori</p>
                     </div>
                 </div>
             )}
