@@ -17,5 +17,11 @@ if (!isSupabaseConfigured) {
 
 // Create client only if configured, otherwise create a mock that won't crash
 export const supabase = isSupabaseConfigured
-    ? createClient(supabaseUrl, supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+            autoRefreshToken: true,
+            persistSession: true,
+            detectSessionInUrl: true, // Penting untuk OAuth redirect
+        },
+    })
     : null;

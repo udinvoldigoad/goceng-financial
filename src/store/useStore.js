@@ -67,27 +67,74 @@ export const useStore = create(
                 }
 
                 try {
-                    // Get current session
-                    const { data: { session }, error } = await supabase.auth.getSession();
+                    // Check if this is an OAuth callback (has hash params or code param)
+                    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const hasAuthCallback = hashParams.has('access_token') || urlParams.has('code');
 
-                    if (error) throw error;
+                    console.log('OAuth callback detected:', hasAuthCallback);
+                    console.log('URL hash:', window.location.hash);
+                    console.log('URL search:', window.location.search);
 
-                    if (session) {
-                        const user = session.user;
-                        set({
-                            auth: { status: 'authed', user, session },
-                            user: {
-                                name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-                                email: user.email || '',
-                                avatar: user.user_metadata?.avatar_url || '',
-                            },
-                        });
-                    } else {
-                        set({ auth: { status: 'guest', user: null, session: null } });
-                    }
+                    // Setup auth state change listener
+                    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+                        console.log('Auth state changed:', event, session ? 'Has session' : 'No session');
 
-                    // Listen for auth changes
-                    supabase.auth.onAuthStateChange((event, session) => {
+                        if (event === 'SIGNED_IN' && session) {
+                            const user = session.user;
+                            set({
+                                auth: { status: 'authed', user, session },
+                                user: {
+                                    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                                    email: user.email || '',
+                                    avatar: user.user_metadata?.avatar_url || '',
+                                },
+                            });
+                            // Clean up URL after successful auth
+                            if (window.location.hash || window.location.search.includes('code=')) {
+                                window.history.replaceState({}, '', window.location.pathname);
+                            }
+                        } else if (event === 'SIGNED_OUT') {
+                            set({
+                                auth: { status: 'guest', user: null, session: null },
+                                user: { name: 'User', email: '', avatar: '' },
+                            });
+                        } else if (event === 'TOKEN_REFRESHED' && session) {
+                            const user = session.user;
+                            set({
+                                auth: { status: 'authed', user, session },
+                                user: {
+                                    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                                    email: user.email || '',
+                                    avatar: user.user_metadata?.avatar_url || '',
+                                },
+                            });
+                        } else if (event === 'INITIAL_SESSION') {
+                            // For INITIAL_SESSION, only set guest if no session AND no auth callback pending
+                            if (session) {
+                                const user = session.user;
+                                set({
+                                    auth: { status: 'authed', user, session },
+                                    user: {
+                                        name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                                        email: user.email || '',
+                                        avatar: user.user_metadata?.avatar_url || '',
+                                    },
+                                });
+                            } else if (!hasAuthCallback) {
+                                set({ auth: { status: 'guest', user: null, session: null } });
+                            }
+                            // If hasAuthCallback but no session, keep loading state - wait for SIGNED_IN event
+                        }
+                    });
+
+                    // If there's an OAuth callback, we wait for onAuthStateChange to handle it
+                    // Otherwise, get current session normally
+                    if (!hasAuthCallback) {
+                        const { data: { session }, error } = await supabase.auth.getSession();
+
+                        if (error) throw error;
+
                         if (session) {
                             const user = session.user;
                             set({
@@ -98,13 +145,9 @@ export const useStore = create(
                                     avatar: user.user_metadata?.avatar_url || '',
                                 },
                             });
-                        } else {
-                            set({
-                                auth: { status: 'guest', user: null, session: null },
-                                user: { name: 'User', email: '', avatar: '' },
-                            });
                         }
-                    });
+                        // If no session and no callback, onAuthStateChange INITIAL_SESSION will set to guest
+                    }
                 } catch (error) {
                     console.error('Auth initialization error:', error);
                     set({ auth: { status: 'guest', user: null, session: null } });

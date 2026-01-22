@@ -60,23 +60,23 @@ export default function Budget() {
     return (
         <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex flex-wrap items-end justify-between gap-6 mb-8">
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-8">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-2xl font-bold text-white">Anggaran</h1>
+                    <h1 className="text-xl md:text-2xl font-bold text-white">Anggaran</h1>
                     <div className="flex items-center gap-4">
                         <div>
-                            <p className="text-text-muted text-sm">Total Anggaran Bulan Ini</p>
+                            <p className="text-text-muted text-xs md:text-sm">Total Anggaran Bulan Ini</p>
                             <div className="flex items-baseline gap-3">
-                                <span className="text-4xl font-black text-white">{formatCurrency(totalBudget)}</span>
+                                <span className="text-2xl md:text-4xl font-black text-white">{formatCurrency(totalBudget)}</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
                     <select
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="px-4 py-2 rounded-lg bg-surface-dark border border-border-dark text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="px-4 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary w-full sm:w-auto cursor-pointer"
                     >
                         {monthOptions.map(opt => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -84,35 +84,35 @@ export default function Budget() {
                     </select>
                     <button
                         onClick={() => setShowAddBudget(true)}
-                        className="flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold tracking-wide shadow-lg shadow-primary/20"
+                        className="flex items-center gap-2 justify-center rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-all text-sm font-bold tracking-wide shadow-lg shadow-primary/20 active:scale-95 touch-manipulation"
                     >
                         <span className="material-symbols-outlined text-[20px]">add</span>
-                        <span>Atur Anggaran Baru</span>
+                        <span>Atur Anggaran</span>
                     </button>
                 </div>
             </div>
 
             {/* Summary Card */}
             {budgetsWithSpent.length > 0 && (
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-6 mb-8">
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-4 md:p-6 mb-8">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-white">Ringkasan {formatMonth(selectedMonth)}</h3>
-                        <span className={`text-sm font-bold ${totalSpent > totalBudget ? 'text-red-400' : 'text-green-400'}`}>
+                        <h3 className="font-bold text-white text-sm md:text-base">Ringkasan {formatMonth(selectedMonth)}</h3>
+                        <span className={`text-xs md:text-sm font-bold ${totalSpent > totalBudget ? 'text-red-400' : 'text-green-400'}`}>
                             {calculatePercentage(totalSpent, totalBudget)}% terpakai
                         </span>
                     </div>
-                    <div className="grid grid-cols-3 gap-6">
-                        <div>
-                            <p className="text-text-muted text-xs uppercase mb-1">Total Anggaran</p>
-                            <p className="text-xl font-bold text-white">{formatCurrency(totalBudget)}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                        <div className="p-3 bg-background-dark/50 rounded-xl border border-white/5">
+                            <p className="text-text-muted text-[10px] md:text-xs uppercase mb-1">Total Anggaran</p>
+                            <p className="text-lg md:text-xl font-bold text-white">{formatCurrency(totalBudget)}</p>
                         </div>
-                        <div>
-                            <p className="text-text-muted text-xs uppercase mb-1">Terpakai</p>
-                            <p className="text-xl font-bold text-red-400">{formatCurrency(totalSpent)}</p>
+                        <div className="p-3 bg-background-dark/50 rounded-xl border border-white/5">
+                            <p className="text-text-muted text-[10px] md:text-xs uppercase mb-1">Terpakai</p>
+                            <p className="text-lg md:text-xl font-bold text-red-400">{formatCurrency(totalSpent)}</p>
                         </div>
-                        <div>
-                            <p className="text-text-muted text-xs uppercase mb-1">Sisa</p>
-                            <p className={`text-xl font-bold ${totalBudget - totalSpent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <div className="p-3 bg-background-dark/50 rounded-xl border border-white/5">
+                            <p className="text-text-muted text-[10px] md:text-xs uppercase mb-1">Sisa</p>
+                            <p className={`text-lg md:text-xl font-bold ${totalBudget - totalSpent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                                 {formatCurrency(Math.max(totalBudget - totalSpent, 0))}
                             </p>
                         </div>
@@ -130,45 +130,45 @@ export default function Budget() {
                     onAction={() => setShowAddBudget(true)}
                 />
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                     {budgetsWithSpent.map((budget) => {
                         const category = getCategoryById(budget.category);
                         return (
-                            <div key={budget.id} className="bg-surface-dark border border-border-dark rounded-2xl p-3 md:p-5 relative group hover:border-border-dark/80 transition-all">
-                                <div className="flex items-start justify-between mb-3 md:mb-4">
-                                    <div className="flex items-center gap-2 md:gap-3">
-                                        <div className={`h-8 w-8 md:h-10 md:w-10 rounded-xl bg-${budget.color || 'blue'}-500/20 flex items-center justify-center text-${budget.color || 'blue'}-400 shrink-0`}>
-                                            <span className="material-symbols-outlined text-[18px] md:text-[24px]">{budget.icon || category?.icon || 'pie_chart'}</span>
+                            <div key={budget.id} className="bg-surface-dark border border-border-dark rounded-2xl p-4 relative group hover:border-border-dark/80 transition-all shadow-sm">
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className="flex items-center gap-3 overflow-hidden">
+                                        <div className={`h-10 w-10 rounded-xl bg-${budget.color || 'blue'}-500/20 flex items-center justify-center text-${budget.color || 'blue'}-400 shrink-0`}>
+                                            <span className="material-symbols-outlined text-[24px]">{budget.icon || category?.icon || 'pie_chart'}</span>
                                         </div>
-                                        <div className="min-w-0">
-                                            <h3 className="font-bold text-white text-xs md:text-base truncate">{category?.name || budget.category}</h3>
-                                            <p className="text-[10px] md:text-xs text-text-muted truncate">{formatMonth(budget.month)}</p>
+                                        <div className="min-w-0 flex-1">
+                                            <h3 className="font-bold text-white text-base truncate">{category?.name || budget.category}</h3>
+                                            <p className="text-xs text-text-muted truncate">{formatMonth(budget.month)}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-0 md:gap-1 absolute top-3 right-3 md:relative md:top-0 md:right-0 bg-surface-dark/50 md:bg-transparent rounded-lg backdrop-blur-sm md:backdrop-filter-none">
+                                    <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => setEditingBudget(budget)}
-                                            className="text-text-muted hover:text-white transition-colors p-1"
+                                            className="text-text-muted hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg"
                                         >
-                                            <span className="material-symbols-outlined text-[16px] md:text-[20px]">edit</span>
+                                            <span className="material-symbols-outlined text-[18px]">edit</span>
                                         </button>
                                         <button
                                             onClick={() => setDeletingBudget(budget)}
-                                            className="text-text-muted hover:text-red-400 transition-colors p-1"
+                                            className="text-text-muted hover:text-red-400 transition-colors p-1.5 hover:bg-white/5 rounded-lg"
                                         >
-                                            <span className="material-symbols-outlined text-[16px] md:text-[20px]">delete</span>
+                                            <span className="material-symbols-outlined text-[18px]">delete</span>
                                         </button>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between mb-1 md:mb-2">
-                                    <span className="text-[10px] md:text-xs text-text-muted">Terpakai</span>
-                                    <span className={`text-xs md:text-sm font-bold ${budget.percentage >= 90 ? 'text-red-400' : 'text-white'}`}>
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-xs text-text-muted">Terpakai</span>
+                                    <span className={`text-sm font-bold ${budget.percentage >= 90 ? 'text-red-400' : 'text-white'}`}>
                                         {budget.percentage}%
                                     </span>
                                 </div>
 
-                                <div className="w-full bg-surface-highlight rounded-full h-1.5 md:h-2 mb-3 md:mb-4 overflow-hidden">
+                                <div className="w-full bg-surface-highlight rounded-full h-2 mb-4 overflow-hidden">
                                     <div
                                         className={`h-full rounded-full transition-all ${getProgressColor(budget.percentage)}`}
                                         style={{ width: `${Math.min(budget.percentage, 100)}%` }}
@@ -176,23 +176,24 @@ export default function Budget() {
                                 </div>
 
                                 {budget.percentage >= 90 && (
-                                    <div className="mb-3 md:mb-4 p-1.5 md:p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                                        <p className="text-[10px] md:text-xs text-red-400 truncate">
-                                            {budget.percentage >= 100 ? '⚠️ Anggaran terlampaui!' : '⚠️ Hampir mencapai batas!'}
+                                    <div className="mb-4 p-2 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-red-400 text-[16px]">warning</span>
+                                        <p className="text-xs text-red-400 font-medium truncate">
+                                            {budget.percentage >= 100 ? 'Anggaran terlampaui!' : 'Hampir habis!'}
                                         </p>
                                     </div>
                                 )}
 
-                                <div className="flex justify-between text-xs md:text-sm">
-                                    <div className="min-w-0">
-                                        <p className="text-text-muted text-[10px] md:text-xs truncate">Sisa Anggaran</p>
-                                        <p className={`font-bold truncate text-xs md:text-base ${budget.remaining <= 0 ? 'text-red-400' : 'text-white'}`}>
+                                <div className="flex justify-between items-end pt-2 border-t border-white/5">
+                                    <div className="min-w-0 pr-2">
+                                        <p className="text-text-muted text-[10px] uppercase tracking-wider mb-0.5">Sisa</p>
+                                        <p className={`font-bold truncate text-lg ${budget.remaining <= 0 ? 'text-red-400' : 'text-green-400'}`}>
                                             {formatCurrency(Math.max(budget.remaining, 0))}
                                         </p>
                                     </div>
                                     <div className="text-right min-w-0">
-                                        <p className="text-text-muted text-[10px] md:text-xs truncate">Total Limit</p>
-                                        <p className="font-medium text-text-muted truncate text-xs md:text-base">{formatCurrency(budget.monthlyLimit)}</p>
+                                        <p className="text-text-muted text-[10px] uppercase tracking-wider mb-0.5">Limit</p>
+                                        <p className="font-medium text-white truncate text-base">{formatCurrency(budget.monthlyLimit)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -200,15 +201,15 @@ export default function Budget() {
                     })}
 
                     {/* Add Category Card */}
-                    <div
+                    <button
                         onClick={() => setShowAddBudget(true)}
-                        className="bg-surface-dark border border-dashed border-border-dark rounded-2xl p-3 md:p-5 flex flex-col items-center justify-center min-h-[160px] md:min-h-[200px] cursor-pointer hover:border-primary/50 hover:bg-surface-highlight/30 transition-all group"
+                        className="bg-surface-dark border border-dashed border-border-dark rounded-2xl p-4 flex flex-col items-center justify-center min-h-[180px] cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group active:scale-95 touch-manipulation"
                     >
-                        <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-surface-highlight flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-2 md:mb-3">
+                        <div className="h-12 w-12 rounded-full bg-surface-highlight group-hover:bg-primary/20 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-3">
                             <span className="material-symbols-outlined text-2xl">add</span>
                         </div>
-                        <p className="text-text-muted font-medium text-xs md:text-base group-hover:text-white transition-colors text-center">Tambah Kategori</p>
-                    </div>
+                        <p className="text-text-muted font-medium text-sm group-hover:text-primary transition-colors">Tambah Kategori</p>
+                    </button>
                 </div>
             )}
 

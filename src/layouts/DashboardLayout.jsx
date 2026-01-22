@@ -5,7 +5,7 @@ import useStore from '../store/useStore';
 import { formatRelativeDate } from '../services/formatters';
 
 export default function DashboardLayout() {
-    const { notifications, markAllNotificationsRead, clearNotifications } = useStore();
+    const { notifications, markAllNotificationsRead, clearNotifications, user } = useStore();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [showNotifications, setShowNotifications] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -74,6 +74,17 @@ export default function DashboardLayout() {
                         <div className="hidden md:flex items-center gap-3 text-text-muted bg-surface-dark px-4 py-2 rounded-lg border border-border-dark/50">
                             <span className="material-symbols-outlined text-[20px]">calendar_today</span>
                             <span className="text-sm font-medium">{dateString}</span>
+                        </div>
+
+                        {/* Mobile User Profile */}
+                        <div className="md:hidden flex items-center gap-2 mr-2">
+                            <div className="w-8 h-8 rounded-full bg-gray-600 overflow-hidden border border-white/10">
+                                <img
+                                    className="w-full h-full object-cover"
+                                    src={user?.avatar || "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"}
+                                    alt="Profile"
+                                />
+                            </div>
                         </div>
 
                         <div className="relative" ref={notificationRef}>
