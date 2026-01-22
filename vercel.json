@@ -1,7 +1,39 @@
 {
     "rewrites": [
         {
-            "source": "/((?!api/).*)",
+            "source": "/login",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/assets",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/transactions",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/budget",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/goals",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/reports",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/profile",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/settings",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/(.*)",
             "destination": "/index.html"
         }
     ]
