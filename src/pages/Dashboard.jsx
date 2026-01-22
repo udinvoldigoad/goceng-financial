@@ -117,28 +117,28 @@ export default function Dashboard() {
 
                 {/* Monthly Income/Expense Cards */}
                 <div className="grid grid-cols-2 gap-3 md:gap-6">
-                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-4 md:p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
+                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-3 sm:p-4 md:p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
-                            <div>
-                                <p className="text-xs md:text-sm font-medium text-text-muted mb-1">Pemasukan Bulan Ini</p>
-                                <h3 className="text-base md:text-2xl font-bold tracking-tight text-white break-all">
+                            <div className="min-w-0">
+                                <p className="text-[10px] sm:text-xs md:text-sm font-medium text-text-muted mb-1">Pemasukan Bulan Ini</p>
+                                <h3 className="text-sm sm:text-base md:text-2xl font-bold tracking-tight text-white truncate">
                                     +{formatCurrency(monthlyIncome)}
                                 </h3>
                             </div>
-                            <div className="hidden md:block rounded-lg bg-green-900/20 p-2 text-green-400 self-start">
+                            <div className="hidden md:block rounded-lg bg-green-900/20 p-2 text-green-400 self-start shrink-0">
                                 <span className="material-symbols-outlined">calendar_month</span>
                             </div>
                         </div>
                     </div>
-                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-4 md:p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
+                    <div className="group relative overflow-hidden rounded-2xl bg-surface-dark p-3 sm:p-4 md:p-6 shadow-sm ring-1 ring-white/5 hover:shadow-md transition-all">
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
-                            <div>
-                                <p className="text-xs md:text-sm font-medium text-text-muted mb-1">Pengeluaran Bulan Ini</p>
-                                <h3 className="text-base md:text-2xl font-bold tracking-tight text-white break-all">
+                            <div className="min-w-0">
+                                <p className="text-[10px] sm:text-xs md:text-sm font-medium text-text-muted mb-1">Pengeluaran Bulan Ini</p>
+                                <h3 className="text-sm sm:text-base md:text-2xl font-bold tracking-tight text-white truncate">
                                     -{formatCurrency(monthlyExpense)}
                                 </h3>
                             </div>
-                            <div className="hidden md:block rounded-lg bg-red-900/20 p-2 text-red-400 self-start">
+                            <div className="hidden md:block rounded-lg bg-red-900/20 p-2 text-red-400 self-start shrink-0">
                                 <span className="material-symbols-outlined">credit_score</span>
                             </div>
                         </div>

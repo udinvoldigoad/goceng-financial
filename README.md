@@ -1,10 +1,16 @@
-# Goceng - Personal Finance Tracker (Does not support mobile display yet)
+# Goceng - Personal Finance Tracker
 
 A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 
 ![Goceng Finance Tracker](https://img.shields.io/badge/React-19.2.0-blue) ![Tailwind](https://img.shields.io/badge/Tailwind-4.1.18-teal) ![Vite](https://img.shields.io/badge/Vite-7.2.4-purple)
 
 ## Features
+
+### 🔐 Authentication
+- Google OAuth login via Supabase
+- Persistent sessions (remember logged-in users)
+- Protected routes with automatic redirects
+- Logout functionality
 
 ### 💰 Wallet Management
 - Add, edit, and delete wallets (bank accounts, e-wallets, cash)
@@ -45,6 +51,7 @@ A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 - **Frontend**: React 19 with Vite
 - **Styling**: Tailwind CSS 4 with custom theme
 - **State Management**: Zustand with localStorage persistence
+- **Authentication**: Supabase Auth (Google OAuth)
 - **Forms**: React Hook Form + Zod validation
 - **Charts**: Recharts
 - **Notifications**: react-hot-toast
@@ -55,6 +62,7 @@ A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
+- Supabase project with Google OAuth enabled
 
 ### Installation
 
@@ -66,10 +74,50 @@ cd goceng
 # Install dependencies
 npm install
 
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your Supabase credentials
+
 # Start development server
 npm run dev
 ```
 Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Environment Variables
+
+Create a `.env` file with:
+```
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Get these from your Supabase project: **Settings → API**
+
+### Supabase Configuration
+
+1. Go to **Authentication → Providers → Google**
+2. Enable Google provider and add your Google OAuth credentials
+3. Add `http://localhost:5173` to Redirect URLs
+
+### Build for Production
+
+```bash
+npm run build
+npm run preview
+```
+
+## Authentication Testing Checklist
+
+| Step | Action | Expected Result |
+|------|--------|-----------------|
+| 1 | Open incognito browser, go to `/` | Redirected to `/login` |
+| 2 | Try navigating to `/transactions` directly | Redirected to `/login` |
+| 3 | Click "Lanjutkan dengan Google" | Google OAuth popup appears |
+| 4 | Complete Google login | Redirected to dashboard (`/`) |
+| 5 | Refresh the page | Still on dashboard (session persisted) |
+| 6 | Navigate to `/login` | Redirected to `/` |
+| 7 | Click profile → "Keluar" in sidebar | Redirected to `/login` |
+| 8 | Try accessing `/assets` | Redirected to `/login` |
 
 ### Build for Production
 

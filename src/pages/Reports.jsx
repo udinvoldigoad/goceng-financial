@@ -108,47 +108,47 @@ export default function Reports() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
-                            <span className="material-symbols-outlined">arrow_downward</span>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-3 sm:p-5">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/10 text-green-400">
+                            <span className="material-symbols-outlined text-[18px] sm:text-[24px]">arrow_downward</span>
                         </div>
-                        <span className="text-sm text-text-muted">Total Pemasukan</span>
+                        <span className="text-[10px] sm:text-sm text-text-muted">Total Pemasukan</span>
                     </div>
-                    <p className="text-2xl font-bold text-green-400">{formatCurrency(monthlyIncome)}</p>
+                    <p className="text-base sm:text-2xl font-bold text-green-400 truncate">{formatCurrency(monthlyIncome)}</p>
                 </div>
 
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 rounded-lg bg-red-500/10 text-red-400">
-                            <span className="material-symbols-outlined">arrow_upward</span>
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-3 sm:p-5">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="p-1.5 sm:p-2 rounded-lg bg-red-500/10 text-red-400">
+                            <span className="material-symbols-outlined text-[18px] sm:text-[24px]">arrow_upward</span>
                         </div>
-                        <span className="text-sm text-text-muted">Total Pengeluaran</span>
+                        <span className="text-[10px] sm:text-sm text-text-muted">Total Pengeluaran</span>
                     </div>
-                    <p className="text-2xl font-bold text-red-400">{formatCurrency(monthlyExpense)}</p>
+                    <p className="text-base sm:text-2xl font-bold text-red-400 truncate">{formatCurrency(monthlyExpense)}</p>
                 </div>
 
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className={`p-2 rounded-lg ${netIncome >= 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-                            <span className="material-symbols-outlined">account_balance</span>
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-3 sm:p-5">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className={`p-1.5 sm:p-2 rounded-lg ${netIncome >= 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                            <span className="material-symbols-outlined text-[18px] sm:text-[24px]">account_balance</span>
                         </div>
-                        <span className="text-sm text-text-muted">Saldo Bersih</span>
+                        <span className="text-[10px] sm:text-sm text-text-muted">Saldo Bersih</span>
                     </div>
-                    <p className={`text-2xl font-bold ${netIncome >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    <p className={`text-base sm:text-2xl font-bold truncate ${netIncome >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {netIncome >= 0 ? '+' : ''}{formatCurrency(netIncome)}
                     </p>
                 </div>
 
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className={`p-2 rounded-lg ${savingsRate >= 20 ? 'bg-green-500/10 text-green-400' : savingsRate >= 0 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'}`}>
-                            <span className="material-symbols-outlined">savings</span>
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-3 sm:p-5">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className={`p-1.5 sm:p-2 rounded-lg ${savingsRate >= 20 ? 'bg-green-500/10 text-green-400' : savingsRate >= 0 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'}`}>
+                            <span className="material-symbols-outlined text-[18px] sm:text-[24px]">savings</span>
                         </div>
-                        <span className="text-sm text-text-muted">Rasio Tabungan</span>
+                        <span className="text-[10px] sm:text-sm text-text-muted">Rasio Tabungan</span>
                     </div>
-                    <p className={`text-2xl font-bold ${savingsRate >= 20 ? 'text-green-400' : savingsRate >= 0 ? 'text-yellow-400' : 'text-red-400'}`}>
+                    <p className={`text-base sm:text-2xl font-bold ${savingsRate >= 20 ? 'text-green-400' : savingsRate >= 0 ? 'text-yellow-400' : 'text-red-400'}`}>
                         {savingsRate}%
                     </p>
                 </div>

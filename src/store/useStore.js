@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 
 const STORAGE_VERSION = 1;
 
@@ -33,9 +34,14 @@ const initialState = {
     subscriptions: [],
     notifications: [],
     user: {
-        name: 'Udin Petot',
-        email: 'udin@goceng.id',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCCgbulcB0M9cILVXQceQfzLp-PXgZzRQV2DrR2LdPSB7x6LL17D3FWLRg7-jDGJv5tWL9iUWDJKmK5rPfvEUSaqYaVz6Vp7tjHtkwzUZ6tGyWTjc0ro-Yu-UfYaLR_dGcLmasvBnkK_qS7vA9fmTKh-zOt6Neq3np-cjrDKGdfUY2H3A7zoDMeC_I8DPGDEqx96JtiK0VSKMsGKna-Ykm01CBwXX5j2kyqOjWYXrmslT9bYFFqtmSrNrGct7ieEpe_wXR-kx5TAPZT',
+        name: 'User',
+        email: '',
+        avatar: '',
+    },
+    auth: {
+        status: 'loading', // 'loading' | 'authed' | 'guest'
+        user: null,
+        session: null,
     },
     settings: {
         theme: 'dark',
@@ -50,6 +56,74 @@ export const useStore = create(
     persist(
         (set, get) => ({
             ...initialState,
+
+            // ==================== AUTH ACTIONS ====================
+            initAuth: async () => {
+                // If Supabase is not configured, set as guest immediately
+                if (!isSupabaseConfigured || !supabase) {
+                    console.warn('Supabase not configured - running in guest mode');
+                    set({ auth: { status: 'guest', user: null, session: null } });
+                    return;
+                }
+
+                try {
+                    // Get current session
+                    const { data: { session }, error } = await supabase.auth.getSession();
+
+                    if (error) throw error;
+
+                    if (session) {
+                        const user = session.user;
+                        set({
+                            auth: { status: 'authed', user, session },
+                            user: {
+                                name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                                email: user.email || '',
+                                avatar: user.user_metadata?.avatar_url || '',
+                            },
+                        });
+                    } else {
+                        set({ auth: { status: 'guest', user: null, session: null } });
+                    }
+
+                    // Listen for auth changes
+                    supabase.auth.onAuthStateChange((event, session) => {
+                        if (session) {
+                            const user = session.user;
+                            set({
+                                auth: { status: 'authed', user, session },
+                                user: {
+                                    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                                    email: user.email || '',
+                                    avatar: user.user_metadata?.avatar_url || '',
+                                },
+                            });
+                        } else {
+                            set({
+                                auth: { status: 'guest', user: null, session: null },
+                                user: { name: 'User', email: '', avatar: '' },
+                            });
+                        }
+                    });
+                } catch (error) {
+                    console.error('Auth initialization error:', error);
+                    set({ auth: { status: 'guest', user: null, session: null } });
+                }
+            },
+
+            signOut: async () => {
+                try {
+                    if (supabase) {
+                        await supabase.auth.signOut();
+                    }
+                    set({
+                        auth: { status: 'guest', user: null, session: null },
+                        user: { name: 'User', email: '', avatar: '' },
+                    });
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                }
+            },
 
             // ==================== NOTIFICATION ACTIONS ====================
             addNotification: (notification) => {

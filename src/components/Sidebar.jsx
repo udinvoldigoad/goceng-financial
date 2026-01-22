@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
 
 const navItems = [
@@ -12,8 +12,15 @@ const navItems = [
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
-    const { user } = useStore();
+    const { user, signOut } = useStore();
+    const navigate = useNavigate();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    const handleLogout = async () => {
+        await signOut();
+        setIsSettingsOpen(false);
+        navigate('/login');
+    };
 
     return (
         <aside className={`
@@ -82,6 +89,13 @@ export default function Sidebar({ isOpen, onClose }) {
                                 <span className="material-symbols-outlined text-[20px]">settings</span>
                                 <p className="text-sm font-medium leading-normal">Pengaturan</p>
                             </NavLink>
+                            <button
+                                onClick={handleLogout}
+                                className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition-colors border-t border-border-dark"
+                            >
+                                <span className="material-symbols-outlined text-[20px]">logout</span>
+                                <p className="text-sm font-medium leading-normal">Keluar</p>
+                            </button>
                         </div>
                     )}
 

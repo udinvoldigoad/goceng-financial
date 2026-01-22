@@ -121,7 +121,7 @@ export default function Transactions() {
                 <div className="flex items-center gap-3">
                     <div className="text-right">
                         <span className={`block font-bold ${tx.type === 'income' ? 'text-green-400' :
-                                tx.type === 'transfer' ? 'text-blue-400' : 'text-red-400'
+                            tx.type === 'transfer' ? 'text-blue-400' : 'text-red-400'
                             }`}>
                             {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''}
                             {formatCurrency(tx.amount)}
@@ -189,8 +189,8 @@ export default function Transactions() {
             </div>
 
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
+            <div className="flex flex-col gap-4 mb-6">
+                <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">search</span>
                     <input
                         className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm placeholder-text-muted text-white"
@@ -200,9 +200,9 @@ export default function Transactions() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
-                <div className="flex gap-3 flex-wrap">
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
                     <select
-                        className="px-4 py-3 pr-8 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm font-medium text-white appearance-none cursor-pointer"
+                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
                         value={filterCategory}
                         onChange={(e) => setFilterCategory(e.target.value)}
                     >
@@ -212,7 +212,7 @@ export default function Transactions() {
                         ))}
                     </select>
                     <select
-                        className="px-4 py-3 pr-8 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm font-medium text-white appearance-none cursor-pointer"
+                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
                         value={filterType}
                         onChange={(e) => setFilterType(e.target.value)}
                     >
@@ -222,7 +222,7 @@ export default function Transactions() {
                         <option value="transfer">Transfer</option>
                     </select>
                     <select
-                        className="px-4 py-3 pr-8 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm font-medium text-white appearance-none cursor-pointer"
+                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
                         value={filterWallet}
                         onChange={(e) => setFilterWallet(e.target.value)}
                     >
@@ -232,7 +232,7 @@ export default function Transactions() {
                         ))}
                     </select>
                     <select
-                        className="px-4 py-3 pr-8 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm font-medium text-white appearance-none cursor-pointer"
+                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value)}
                     >
