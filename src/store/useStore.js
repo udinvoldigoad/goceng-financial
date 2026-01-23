@@ -43,6 +43,7 @@ const initialState = {
         user: null,
         session: null,
     },
+    showLoginModal: false,
     settings: {
         theme: 'dark',
         currency: 'IDR',
@@ -167,6 +168,10 @@ export const useStore = create(
                     console.error('Sign out error:', error);
                 }
             },
+
+            // ==================== LOGIN MODAL ACTIONS ====================
+            openLoginModal: () => set({ showLoginModal: true }),
+            closeLoginModal: () => set({ showLoginModal: false }),
 
             // ==================== NOTIFICATION ACTIONS ====================
             addNotification: (notification) => {

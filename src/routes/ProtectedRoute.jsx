@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import useStore from '../store/useStore';
 
 export default function ProtectedRoute() {
-    const { auth } = useStore();
+    const { auth, openLoginModal } = useStore();
 
     // Show loading state while checking auth
     if (auth.status === 'loading') {
@@ -16,11 +16,14 @@ export default function ProtectedRoute() {
         );
     }
 
-    // Redirect to login if not authenticated
+    // Redirect to home and open login modal if not authenticated
     if (auth.status === 'guest') {
-        return <Navigate to="/login" replace />;
+        // Open login modal when trying to access protected route
+        openLoginModal();
+        return <Navigate to="/" replace />;
     }
 
     // Render child routes if authenticated
     return <Outlet />;
 }
+

@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import useStore from '../store/useStore';
 import { formatRelativeDate } from '../services/formatters';
 
 export default function DashboardLayout() {
-    const { notifications, markAllNotificationsRead, clearNotifications, user } = useStore();
+    const { notifications, markAllNotificationsRead, clearNotifications, user, auth, openLoginModal } = useStore();
+    const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [showNotifications, setShowNotifications] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -76,15 +77,28 @@ export default function DashboardLayout() {
                             <span className="text-sm font-medium">{dateString}</span>
                         </div>
 
-                        {/* Mobile User Profile */}
+                        {/* Mobile User Profile / Login Button */}
                         <div className="md:hidden flex items-center gap-2 mr-2">
-                            <div className="w-8 h-8 rounded-full bg-gray-600 overflow-hidden border border-white/10">
-                                <img
-                                    className="w-full h-full object-cover"
-                                    src={user?.avatar || "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"}
-                                    alt="Profile"
-                                />
-                            </div>
+                            {auth.status === 'authed' ? (
+                                <button
+                                    onClick={() => navigate('/profile')}
+                                    className="w-8 h-8 rounded-full bg-gray-600 overflow-hidden border border-white/10 hover:ring-2 hover:ring-primary transition-all"
+                                >
+                                    <img
+                                        className="w-full h-full object-cover"
+                                        src={user?.avatar || "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"}
+                                        alt="Profile"
+                                    />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={openLoginModal}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 rounded-lg text-white text-xs font-medium transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">login</span>
+                                    Masuk
+                                </button>
+                            )}
                         </div>
 
                         <div className="relative" ref={notificationRef}>

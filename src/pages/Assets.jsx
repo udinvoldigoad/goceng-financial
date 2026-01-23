@@ -7,9 +7,11 @@ import TransferForm from '../components/forms/TransferForm';
 import EmptyState from '../components/ui/EmptyState';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
+import { useRequireAuth } from '../hooks/useRequireAuth';
 
 export default function Assets() {
     const { wallets, subscriptions, deleteWallet, getUpcomingSubscriptions } = useStore();
+    const { requireAuth } = useRequireAuth();
     const [showAddWallet, setShowAddWallet] = useState(false);
     const [showTransfer, setShowTransfer] = useState(false);
     const [editingWallet, setEditingWallet] = useState(null);
@@ -18,6 +20,12 @@ export default function Assets() {
 
     const totalBalance = wallets.reduce((sum, w) => sum + w.balance, 0);
     const upcomingPayments = getUpcomingSubscriptions(14);
+
+    // Auth-protected action handlers
+    const handleAddWallet = () => requireAuth(() => setShowAddWallet(true));
+    const handleTransfer = () => requireAuth(() => setShowTransfer(true));
+    const handleEditWallet = (wallet) => requireAuth(() => setEditingWallet(wallet));
+    const handleDeleteWalletClick = (wallet) => requireAuth(() => setDeletingWallet(wallet));
 
     const handleDeleteWallet = () => {
         if (deletingWallet) {
@@ -66,14 +74,14 @@ export default function Assets() {
                 </div>
                 <div className="flex gap-3">
                     <button
-                        onClick={() => setShowAddWallet(true)}
+                        onClick={handleAddWallet}
                         className="flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold tracking-wide shadow-lg shadow-primary/20"
                     >
                         <span className="material-symbols-outlined text-[20px]">add</span>
                         <span>Add New Wallet</span>
                     </button>
                     <button
-                        onClick={() => setShowTransfer(true)}
+                        onClick={handleTransfer}
                         disabled={wallets.length < 2}
                         className="flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-5 bg-surface-dark text-white hover:bg-surface-highlight transition-colors text-sm font-bold tracking-wide border border-border-dark disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -90,7 +98,7 @@ export default function Assets() {
                     title="Belum ada wallet"
                     description="Tambahkan wallet pertama Anda untuk mulai melacak keuangan."
                     actionLabel="Tambah Wallet"
-                    onAction={() => setShowAddWallet(true)}
+                    onAction={handleAddWallet}
                 />
             ) : (
                 <section>
@@ -113,7 +121,7 @@ export default function Assets() {
                                         </div>
                                         <div className="flex items-center gap-1 md:gap-2">
                                             <button
-                                                onClick={() => setEditingWallet(primaryWallet)}
+                                                onClick={() => handleEditWallet(primaryWallet)}
                                                 className="text-white/70 hover:text-white transition-colors"
                                             >
                                                 <span className="material-symbols-outlined text-[18px] md:text-[20px]">edit</span>
@@ -160,13 +168,13 @@ export default function Assets() {
                                             </div>
                                             <div className="flex items-center gap-0 md:gap-1 absolute top-3 right-3 md:relative md:top-0 md:right-0 bg-surface-dark/50 md:bg-transparent rounded-lg backdrop-blur-sm md:backdrop-filter-none">
                                                 <button
-                                                    onClick={() => setEditingWallet(wallet)}
+                                                    onClick={() => handleEditWallet(wallet)}
                                                     className="text-text-muted hover:text-white transition-colors p-1"
                                                 >
                                                     <span className="material-symbols-outlined text-[16px] md:text-[20px]">edit</span>
                                                 </button>
                                                 <button
-                                                    onClick={() => setDeletingWallet(wallet)}
+                                                    onClick={() => handleDeleteWalletClick(wallet)}
                                                     className="text-text-muted hover:text-red-400 transition-colors p-1"
                                                 >
                                                     <span className="material-symbols-outlined text-[16px] md:text-[20px]">delete</span>
@@ -187,7 +195,7 @@ export default function Assets() {
 
                         {/* Add Wallet Card */}
                         <div
-                            onClick={() => setShowAddWallet(true)}
+                            onClick={handleAddWallet}
                             className="group relative rounded-2xl bg-surface-dark border border-dashed border-border-dark p-3 md:p-6 flex flex-col items-center justify-center min-h-[160px] md:min-h-[200px] cursor-pointer hover:border-primary/50 hover:bg-surface-highlight/30 transition-all"
                         >
                             <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-surface-highlight flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-2 md:mb-3">

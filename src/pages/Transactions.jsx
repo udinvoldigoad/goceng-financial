@@ -7,9 +7,11 @@ import TransactionForm from '../components/forms/TransactionForm';
 import EmptyState from '../components/ui/EmptyState';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
+import { useRequireAuth } from '../hooks/useRequireAuth';
 
 export default function Transactions() {
     const { transactions, wallets, deleteTransaction } = useStore();
+    const { requireAuth } = useRequireAuth();
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddTransaction, setShowAddTransaction] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState(null);
@@ -18,6 +20,11 @@ export default function Transactions() {
     const [filterType, setFilterType] = useState('');
     const [filterWallet, setFilterWallet] = useState('');
     const [sortOrder, setSortOrder] = useState('newest');
+
+    // Auth-protected action handlers
+    const handleAddTransaction = () => requireAuth(() => setShowAddTransaction(true));
+    const handleEditTransaction = (tx) => requireAuth(() => setEditingTransaction(tx));
+    const handleDeleteTransactionClick = (tx) => requireAuth(() => setDeletingTransaction(tx));
 
     const currentMonth = getCurrentMonth();
     const monthlyIncome = getMonthlyIncome(transactions, currentMonth);
@@ -98,7 +105,7 @@ export default function Transactions() {
         return (
             <div
                 className="p-4 flex items-center justify-between hover:bg-surface-highlight transition-colors border-b border-border-dark last:border-0 cursor-pointer group"
-                onClick={() => setEditingTransaction(tx)}
+                onClick={() => handleEditTransaction(tx)}
             >
                 <div className="flex items-center gap-4">
                     <div className={`w-12 h-12 rounded-xl bg-${category?.color || 'gray'}-900/20 flex items-center justify-center text-${category?.color || 'gray'}-400`}>
@@ -131,7 +138,7 @@ export default function Transactions() {
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            setDeletingTransaction(tx);
+                            handleDeleteTransactionClick(tx);
                         }}
                         className="opacity-0 group-hover:opacity-100 text-text-muted hover:text-red-400 transition-all p-1"
                     >
@@ -251,7 +258,7 @@ export default function Transactions() {
                     title="Belum ada transaksi"
                     description="Tambahkan transaksi pertama Anda untuk mulai melacak keuangan."
                     actionLabel="Tambah Transaksi"
-                    onAction={() => setShowAddTransaction(true)}
+                    onAction={handleAddTransaction}
                 />
             ) : filteredTransactions.length === 0 ? (
                 <div className="text-center py-16">
@@ -288,7 +295,7 @@ export default function Transactions() {
 
             {/* FAB - Add Transaction */}
             <button
-                onClick={() => setShowAddTransaction(true)}
+                onClick={handleAddTransaction}
                 className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-primary text-white shadow-lg shadow-primary/40 flex items-center justify-center hover:bg-blue-600 transition-colors transform hover:scale-105 active:scale-95 z-50"
             >
                 <span className="material-symbols-outlined text-3xl">add</span>

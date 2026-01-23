@@ -7,14 +7,22 @@ import EmptyState from '../components/ui/EmptyState';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
 import FormattedNumberInput from '../components/ui/FormattedNumberInput';
+import { useRequireAuth } from '../hooks/useRequireAuth';
 
 export default function Goals() {
     const { goals, deleteGoal, addGoalContribution } = useStore();
+    const { requireAuth } = useRequireAuth();
     const [showAddGoal, setShowAddGoal] = useState(false);
     const [editingGoal, setEditingGoal] = useState(null);
     const [deletingGoal, setDeletingGoal] = useState(null);
     const [contributingGoal, setContributingGoal] = useState(null);
     const [contributionAmount, setContributionAmount] = useState('');
+
+    // Auth-protected action handlers
+    const handleAddGoal = () => requireAuth(() => setShowAddGoal(true));
+    const handleEditGoal = (goal) => requireAuth(() => setEditingGoal(goal));
+    const handleDeleteGoalClick = (goal) => requireAuth(() => setDeletingGoal(goal));
+    const handleContributeClick = (goal) => requireAuth(() => setContributingGoal(goal));
 
     const handleDelete = () => {
         if (deletingGoal) {
@@ -58,7 +66,7 @@ export default function Goals() {
                     <p className="text-text-muted mt-1">Tetapkan dan lacak target keuangan Anda.</p>
                 </div>
                 <button
-                    onClick={() => setShowAddGoal(true)}
+                    onClick={handleAddGoal}
                     className="flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold tracking-wide shadow-lg shadow-primary/20"
                 >
                     <span className="material-symbols-outlined text-[20px]">add</span>
@@ -73,7 +81,7 @@ export default function Goals() {
                     title="Belum ada goal"
                     description="Tetapkan target keuangan pertama Anda untuk mulai menabung dengan tujuan yang jelas."
                     actionLabel="Buat Goal"
-                    onAction={() => setShowAddGoal(true)}
+                    onAction={handleAddGoal}
                 />
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
@@ -141,7 +149,7 @@ export default function Goals() {
                                 <div className="flex gap-1 md:gap-2">
                                     {!isCompleted && (
                                         <button
-                                            onClick={() => setContributingGoal(goal)}
+                                            onClick={() => handleContributeClick(goal)}
                                             className="flex-1 py-1.5 md:py-2 rounded-lg bg-primary text-white text-[10px] md:text-sm font-medium hover:bg-primary/90 transition-colors"
                                         >
                                             <span className="md:hidden">+ Dana</span>
@@ -149,13 +157,13 @@ export default function Goals() {
                                         </button>
                                     )}
                                     <button
-                                        onClick={() => setEditingGoal(goal)}
+                                        onClick={() => handleEditGoal(goal)}
                                         className="py-1.5 px-2 md:py-2 md:px-3 rounded-lg bg-surface-highlight text-text-muted hover:text-white transition-colors"
                                     >
                                         <span className="material-symbols-outlined text-[16px] md:text-[20px]">edit</span>
                                     </button>
                                     <button
-                                        onClick={() => setDeletingGoal(goal)}
+                                        onClick={() => handleDeleteGoalClick(goal)}
                                         className="py-1.5 px-2 md:py-2 md:px-3 rounded-lg bg-surface-highlight text-text-muted hover:text-red-400 transition-colors"
                                     >
                                         <span className="material-symbols-outlined text-[16px] md:text-[20px]">delete</span>
@@ -167,7 +175,7 @@ export default function Goals() {
 
                     {/* Add Goal Card */}
                     <div
-                        onClick={() => setShowAddGoal(true)}
+                        onClick={handleAddGoal}
                         className="bg-surface-dark border border-dashed border-border-dark rounded-2xl p-3 md:p-6 flex flex-col items-center justify-center min-h-[180px] md:min-h-[280px] cursor-pointer hover:border-primary/50 hover:bg-surface-highlight/30 transition-all group"
                     >
                         <div className="h-10 w-10 md:h-14 md:w-14 rounded-full bg-surface-highlight flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-2 md:mb-4">

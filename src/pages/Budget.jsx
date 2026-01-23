@@ -7,13 +7,20 @@ import BudgetForm from '../components/forms/BudgetForm';
 import EmptyState from '../components/ui/EmptyState';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
+import { useRequireAuth } from '../hooks/useRequireAuth';
 
 export default function Budget() {
     const { budgets, transactions, deleteBudget, getBudgetsForMonth } = useStore();
+    const { requireAuth } = useRequireAuth();
     const [showAddBudget, setShowAddBudget] = useState(false);
     const [editingBudget, setEditingBudget] = useState(null);
     const [deletingBudget, setDeletingBudget] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+
+    // Auth-protected action handlers
+    const handleAddBudget = () => requireAuth(() => setShowAddBudget(true));
+    const handleEditBudget = (budget) => requireAuth(() => setEditingBudget(budget));
+    const handleDeleteBudgetClick = (budget) => requireAuth(() => setDeletingBudget(budget));
 
     const currentBudgets = useMemo(() => {
         return getBudgetsForMonth(selectedMonth);
@@ -83,7 +90,7 @@ export default function Budget() {
                         ))}
                     </select>
                     <button
-                        onClick={() => setShowAddBudget(true)}
+                        onClick={handleAddBudget}
                         className="flex items-center gap-2 justify-center rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-all text-sm font-bold tracking-wide shadow-lg shadow-primary/20 active:scale-95 touch-manipulation"
                     >
                         <span className="material-symbols-outlined text-[20px]">add</span>
@@ -127,7 +134,7 @@ export default function Budget() {
                     title="Belum ada anggaran"
                     description={`Atur anggaran bulanan untuk ${formatMonth(selectedMonth)} agar pengeluaran tetap terkontrol.`}
                     actionLabel="Atur Anggaran"
-                    onAction={() => setShowAddBudget(true)}
+                    onAction={handleAddBudget}
                 />
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -147,13 +154,13 @@ export default function Budget() {
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <button
-                                            onClick={() => setEditingBudget(budget)}
+                                            onClick={() => handleEditBudget(budget)}
                                             className="text-text-muted hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg"
                                         >
                                             <span className="material-symbols-outlined text-[18px]">edit</span>
                                         </button>
                                         <button
-                                            onClick={() => setDeletingBudget(budget)}
+                                            onClick={() => handleDeleteBudgetClick(budget)}
                                             className="text-text-muted hover:text-red-400 transition-colors p-1.5 hover:bg-white/5 rounded-lg"
                                         >
                                             <span className="material-symbols-outlined text-[18px]">delete</span>
@@ -202,7 +209,7 @@ export default function Budget() {
 
                     {/* Add Category Card */}
                     <button
-                        onClick={() => setShowAddBudget(true)}
+                        onClick={handleAddBudget}
                         className="bg-surface-dark border border-dashed border-border-dark rounded-2xl p-4 flex flex-col items-center justify-center min-h-[180px] cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group active:scale-95 touch-manipulation"
                     >
                         <div className="h-12 w-12 rounded-full bg-surface-highlight group-hover:bg-primary/20 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors mb-3">
