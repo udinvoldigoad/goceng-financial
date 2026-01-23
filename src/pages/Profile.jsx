@@ -96,7 +96,7 @@ export default function Profile() {
                                 <span className="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">email</span>
                                 <span className="text-white">Email</span>
                             </div>
-                            <span className="text-text-muted">{user?.email || 'email@example.com'}</span>
+                            <span className="text-text-muted truncate max-w-[150px] sm:max-w-[250px]">{user?.email || 'email@example.com'}</span>
                         </div>
                         <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight group hover:bg-surface-highlight/80 transition-colors">
                             <div className="flex items-center gap-3">
