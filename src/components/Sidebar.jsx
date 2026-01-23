@@ -30,9 +30,9 @@ export default function Sidebar({ isOpen, onClose }) {
             md:relative md:translate-x-0
             ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
-            <div className="flex flex-col h-full p-4">
+            <div className="flex flex-col h-full p-4 md:p-4 overflow-hidden">
                 {/* Logo */}
-                <div className="flex gap-3 items-center px-2 pt-2 mb-8 justify-between">
+                <div className="flex gap-3 items-center px-2 pt-2 mb-4 md:mb-8 justify-between shrink-0">
                     <div className="flex gap-3 items-center">
                         <Logo />
                         <div className="flex flex-col">
@@ -43,14 +43,14 @@ export default function Sidebar({ isOpen, onClose }) {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex flex-col gap-2 flex-1">
+                <nav className="flex flex-col gap-1 md:gap-2 flex-1 min-h-0">
                     {navItems.map((item) => (
                         <NavLink
                             key={item.name}
                             to={item.path}
                             onClick={() => onClose && onClose()}
                             className={({ isActive }) =>
-                                `flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive
+                                `flex items-center gap-3 px-3 py-2 md:py-3 rounded-lg transition-colors ${isActive
                                     ? 'text-white bg-primary shadow-lg shadow-primary/20'
                                     : 'text-text-muted hover:text-white hover:bg-white/5'
                                 }`
@@ -63,7 +63,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 </nav>
 
                 {/* Bottom Section */}
-                <div className="flex flex-col gap-3 mt-auto relative">
+                <div className="flex flex-col gap-2 md:gap-3 mt-auto pt-2 md:pt-0 relative shrink-0">
                     {isAuthenticated ? (
                         <>
                             {/* Settings Popup */}
