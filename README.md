@@ -49,7 +49,7 @@ A modern personal finance tracker built with React, Vite, and Tailwind CSS 4.
 ## Tech Stack
 
 - **Frontend**: React 19 with Vite
-- **Styling**: Tailwind CSS 4 with custom theme
+- **Styling**: Tailwind CSS 4
 - **State Management**: Zustand with localStorage persistence
 - **Authentication**: Supabase Auth (Google OAuth)
 - **Forms**: React Hook Form + Zod validation
