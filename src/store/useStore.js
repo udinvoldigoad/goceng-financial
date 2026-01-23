@@ -90,6 +90,7 @@ export const useStore = create(
                                     email: user.email || '',
                                     avatar: user.user_metadata?.avatar_url || '',
                                 },
+                                showLoginModal: false, // Auto-close login modal on successful auth
                             });
                             // Clean up URL after successful auth
                             if (window.location.hash || window.location.search.includes('code=')) {
