@@ -11,11 +11,13 @@ import Goals from './pages/Goals';
 import Reports from './pages/Reports';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import NotFound from './pages/NotFound';
 import ToastContainer from './components/ui/Toast';
 import LoginModal from './components/LoginModal';
+import LoadingScreen from './components/ui/LoadingScreen';
 
 function App() {
-  const { settings, initAuth } = useStore();
+  const { settings, initAuth, isAppLoading, loadingMessage } = useStore();
 
   // Initialize auth on app mount
   useEffect(() => {
@@ -29,6 +31,11 @@ function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [settings.theme]);
+
+  // Show loading screen while initializing
+  if (isAppLoading) {
+    return <LoadingScreen message={loadingMessage} />;
+  }
 
   return (
     <>
@@ -51,6 +58,9 @@ function App() {
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>
+
+          {/* 404 Not Found - Catch all undefined routes */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

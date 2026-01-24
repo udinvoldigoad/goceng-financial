@@ -62,6 +62,8 @@ const initialState = {
         user: null,
         session: null,
     },
+    isAppLoading: true, // Global loading state
+    loadingMessage: 'Memuat aplikasi...', // Loading message
     showLoginModal: false,
     settings: {
         theme: 'dark',
@@ -110,6 +112,7 @@ export const useStore = create(
                                     avatar: user.user_metadata?.avatar_url || '',
                                 },
                                 showLoginModal: false, // Auto-close login modal on successful auth
+                                loadingMessage: 'Menyinkronkan data...',
                             });
 
                             // Load data from cloud
@@ -124,11 +127,13 @@ export const useStore = create(
                                         goals: cloudData.goals || [],
                                         subscriptions: cloudData.subscriptions || [],
                                         settings: { ...get().settings, ...cloudData.settings },
+                                        isAppLoading: false,
                                     });
                                 } else {
                                     // No cloud data - save current local data to cloud
                                     console.log('📤 No cloud data found, syncing local data to cloud...');
                                     debouncedSaveToCloud(user.id, get);
+                                    set({ isAppLoading: false });
                                 }
                             });
 
@@ -140,6 +145,7 @@ export const useStore = create(
                             set({
                                 auth: { status: 'guest', user: null, session: null },
                                 user: { name: 'User', email: '', avatar: '' },
+                                isAppLoading: false,
                             });
                         } else if (event === 'TOKEN_REFRESHED' && session) {
                             const user = session.user;
@@ -162,6 +168,7 @@ export const useStore = create(
                                         email: user.email || '',
                                         avatar: user.user_metadata?.avatar_url || '',
                                     },
+                                    loadingMessage: 'Menyinkronkan data...',
                                 });
 
                                 // Load data from cloud for returning users
@@ -176,11 +183,14 @@ export const useStore = create(
                                             goals: cloudData.goals || [],
                                             subscriptions: cloudData.subscriptions || [],
                                             settings: { ...get().settings, ...cloudData.settings },
+                                            isAppLoading: false,
                                         });
+                                    } else {
+                                        set({ isAppLoading: false });
                                     }
                                 });
                             } else if (!hasAuthCallback) {
-                                set({ auth: { status: 'guest', user: null, session: null } });
+                                set({ auth: { status: 'guest', user: null, session: null }, isAppLoading: false });
                             }
                             // If hasAuthCallback but no session, keep loading state - wait for SIGNED_IN event
                         }
@@ -208,7 +218,7 @@ export const useStore = create(
                     }
                 } catch (error) {
                     console.error('Auth initialization error:', error);
-                    set({ auth: { status: 'guest', user: null, session: null } });
+                    set({ auth: { status: 'guest', user: null, session: null }, isAppLoading: false });
                 }
             },
 
@@ -229,6 +239,9 @@ export const useStore = create(
             // ==================== LOGIN MODAL ACTIONS ====================
             openLoginModal: () => set({ showLoginModal: true }),
             closeLoginModal: () => set({ showLoginModal: false }),
+
+            // ==================== LOADING STATE ACTIONS ====================
+            setAppLoading: (isLoading, message = 'Memuat...') => set({ isAppLoading: isLoading, loadingMessage: message }),
 
             // ==================== CLOUD SYNC ACTIONS ====================
             syncToCloud: async () => {
