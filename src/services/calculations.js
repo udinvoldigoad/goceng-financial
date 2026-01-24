@@ -98,27 +98,6 @@ export function getCategoryBreakdown(transactions, month) {
 }
 
 /**
- * Get income category breakdown for a month
- * @param {Array} transactions 
- * @param {string} month - YYYY-MM format
- * @returns {Array<{category: string, amount: number}>}
- */
-export function getIncomeCategoryBreakdown(transactions, month) {
-    const incomes = transactions.filter(
-        t => t.type === 'income' && t.date.startsWith(month)
-    );
-
-    const breakdown = {};
-    incomes.forEach(t => {
-        breakdown[t.category] = (breakdown[t.category] || 0) + t.amount;
-    });
-
-    return Object.entries(breakdown)
-        .map(([category, amount]) => ({ category, amount }))
-        .sort((a, b) => b.amount - a.amount);
-}
-
-/**
  * Get monthly trend data for the last N months
  * @param {Array} transactions 
  * @param {number} months - Number of months to include

@@ -35,25 +35,6 @@ export function formatDate(date, format = 'medium') {
 }
 
 /**
- * Format time in Indonesian locale
- * @param {string|Date} date 
- * @returns {string}
- */
-export function formatTime(date) {
-    const d = new Date(date);
-    return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
-}
-
-/**
- * Format date and time together
- * @param {string|Date} date 
- * @returns {string}
- */
-export function formatDateTime(date) {
-    return `${formatDate(date, 'full')} | ${formatTime(date)}`;
-}
-
-/**
  * Get relative date string (Hari ini, Kemarin, etc.)
  * @param {string|Date} date 
  * @returns {string}
