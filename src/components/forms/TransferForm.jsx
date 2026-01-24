@@ -1,9 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import useStore from '../../store/useStore';
 import Modal from '../ui/Modal';
 import { toast } from '../ui/Toast';
+import FormattedNumberInput from '../ui/FormattedNumberInput';
 
 const transferSchema = z.object({
     fromWalletId: z.string().min(1, 'Wallet asal wajib dipilih'),
@@ -29,6 +30,7 @@ export default function TransferForm({ isOpen, onClose }) {
         handleSubmit,
         reset,
         watch,
+        control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(transferSchema),
@@ -120,12 +122,21 @@ export default function TransferForm({ isOpen, onClose }) {
                     <label className="block text-sm font-medium text-text-muted mb-1.5">
                         Jumlah
                     </label>
-                    <input
-                        type="number"
-                        {...register('amount')}
-                        className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="0"
-                    />
+                    <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-bold">Rp</span>
+                        <Controller
+                            name="amount"
+                            control={control}
+                            render={({ field: { onChange, value } }) => (
+                                <FormattedNumberInput
+                                    value={value}
+                                    onChange={onChange}
+                                    className="w-full pl-12 pr-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white font-bold text-lg placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                                    placeholder="0"
+                                />
+                            )}
+                        />
+                    </div>
                     {errors.amount && (
                         <p className="mt-1 text-sm text-red-400">{errors.amount.message}</p>
                     )}
