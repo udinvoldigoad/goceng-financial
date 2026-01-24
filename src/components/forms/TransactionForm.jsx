@@ -84,12 +84,12 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
     }, [isOpen, transaction, wallets, reset]);
 
     const onSubmit = (data) => {
-        // Validation for sufficient balance (simple check)
+        // Validation for sufficient balance
         if (data.type === 'expense' || data.type === 'transfer') {
             const wallet = wallets.find(w => w.id === data.walletId);
             if (wallet && wallet.balance < data.amount) {
-                // We allow it but maybe warn? For now let's just proceed or maybe toast error?
-                // Let's allow negative balances for flexibility, but maybe show warning toast
+                toast.error('Saldo tidak mencukupi! Saldo tersedia: Rp ' + new Intl.NumberFormat('id-ID').format(wallet.balance));
+                return;
             }
         }
 
@@ -120,10 +120,10 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
                             type="button"
                             onClick={() => setValue('type', t)}
                             className={`py-2 text-sm font-medium rounded-lg transition-all ${type === t
-                                    ? t === 'income' ? 'bg-green-500 text-white shadow-lg'
-                                        : t === 'transfer' ? 'bg-blue-500 text-white shadow-lg'
-                                            : 'bg-red-500 text-white shadow-lg'
-                                    : 'text-text-muted hover:text-white hover:bg-white/5'
+                                ? t === 'income' ? 'bg-green-500 text-white shadow-lg'
+                                    : t === 'transfer' ? 'bg-blue-500 text-white shadow-lg'
+                                        : 'bg-red-500 text-white shadow-lg'
+                                : 'text-text-muted hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             {t === 'income' ? 'Pemasukan' : t === 'transfer' ? 'Transfer' : 'Pengeluaran'}
@@ -154,6 +154,19 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
                     {errors.amount && (
                         <p className="mt-1 text-sm text-red-400">{errors.amount.message}</p>
                     )}
+                    {/* Real-time balance warning */}
+                    {(type === 'expense' || type === 'transfer') && (() => {
+                        const selectedWallet = wallets.find(w => w.id === watch('walletId'));
+                        const currentAmount = watch('amount');
+                        if (selectedWallet && currentAmount && Number(currentAmount) > selectedWallet.balance) {
+                            return (
+                                <p className="mt-1 text-sm text-yellow-400">
+                                    ⚠️ Saldo tidak mencukupi. Tersedia: Rp {new Intl.NumberFormat('id-ID').format(selectedWallet.balance)}
+                                </p>
+                            );
+                        }
+                        return null;
+                    })()}
                 </div>
 
                 {/* Wallet & Target Wallet (for transfer) */}
@@ -210,8 +223,8 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
                                     type="button"
                                     onClick={() => setValue('category', cat.id)}
                                     className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${watch('category') === cat.id
-                                            ? `bg-${cat.color}-900/30 border-${cat.color}-500 ring-1 ring-${cat.color}-500`
-                                            : 'bg-surface-highlight border-transparent hover:border-white/10'
+                                        ? `bg-${cat.color}-900/30 border-${cat.color}-500 ring-1 ring-${cat.color}-500`
+                                        : 'bg-surface-highlight border-transparent hover:border-white/10'
                                         }`}
                                 >
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-${cat.color}-900/50 text-${cat.color}-400`}>
