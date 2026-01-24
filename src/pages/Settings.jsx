@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import useStore from '../store/useStore';
 import { generateDemoData } from '../services/demoData';
 import { exportDataJson } from '../services/exportCsv';
@@ -11,6 +11,7 @@ export default function Settings() {
         updateSettings,
         resetAllData,
         exportData,
+        importData,
         wallets,
         assets,
         transactions,
@@ -21,11 +22,50 @@ export default function Settings() {
 
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [showSeedConfirm, setShowSeedConfirm] = useState(false);
+    const [showImportConfirm, setShowImportConfirm] = useState(false);
+    const [importFile, setImportFile] = useState(null);
+    const fileInputRef = useRef(null);
 
     const handleExportData = () => {
         const data = exportData();
         exportDataJson(JSON.parse(data), 'goceng-backup');
         toast.success('Data berhasil diexport!');
+    };
+
+    const handleImportClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (!file.name.endsWith('.json')) {
+                toast.error('File harus berformat JSON!');
+                return;
+            }
+            setImportFile(file);
+            setShowImportConfirm(true);
+        }
+        // Reset input
+        e.target.value = '';
+    };
+
+    const handleImportData = async () => {
+        if (!importFile) return;
+
+        try {
+            const text = await importFile.text();
+            const success = importData(text);
+            if (success) {
+                toast.success('Data berhasil diimport!');
+            } else {
+                toast.error('Gagal mengimport data. Format file tidak valid.');
+            }
+        } catch (error) {
+            toast.error('Gagal membaca file!');
+        }
+        setShowImportConfirm(false);
+        setImportFile(null);
     };
 
     const handleResetData = () => {
@@ -127,6 +167,24 @@ export default function Settings() {
                             </div>
                         </button>
 
+                        <button
+                            onClick={handleImportClick}
+                            className="w-full text-left p-3 rounded-lg bg-surface-highlight hover:bg-surface-highlight/80 transition-colors text-white flex items-center gap-3"
+                        >
+                            <span className="material-symbols-outlined text-text-muted">upload</span>
+                            <div>
+                                <span>Import Data</span>
+                                <p className="text-xs text-text-muted">Restore data dari file backup JSON</p>
+                            </div>
+                        </button>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".json"
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+
                         {!hasData && (
                             <button
                                 onClick={() => setShowSeedConfirm(true)}
@@ -208,6 +266,20 @@ export default function Settings() {
                 title="Muat Data Demo?"
                 message="Ini akan menambahkan contoh wallet, transaksi, anggaran, dan goals untuk mencoba fitur aplikasi."
                 confirmLabel="Ya, Muat Demo"
+            />
+
+            {/* Import Data Confirmation */}
+            <ConfirmDialog
+                isOpen={showImportConfirm}
+                onClose={() => {
+                    setShowImportConfirm(false);
+                    setImportFile(null);
+                }}
+                onConfirm={handleImportData}
+                title="Import Data?"
+                message={`Ini akan mengganti semua data yang ada dengan data dari file "${importFile?.name}". Pastikan Anda sudah export data terlebih dahulu jika diperlukan.`}
+                confirmLabel="Ya, Import Data"
+                danger
             />
         </div>
     );

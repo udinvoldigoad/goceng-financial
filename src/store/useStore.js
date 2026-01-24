@@ -416,13 +416,69 @@ export const useStore = create(
             },
 
             updateTransaction: (id, updates) => {
-                // For simplicity, we don't recalculate balances on update
-                // In a full implementation, you'd reverse the old transaction and apply the new one
-                set((state) => ({
+                const state = get();
+                const oldTransaction = state.transactions.find((t) => t.id === id);
+                if (!oldTransaction) return;
+
+                const newTransaction = { ...oldTransaction, ...updates };
+                let updatedWallets = [...state.wallets];
+
+                // Step 1: Reverse the old transaction's effect on wallets
+                if (oldTransaction.type === 'income') {
+                    updatedWallets = updatedWallets.map((w) =>
+                        w.id === oldTransaction.walletId
+                            ? { ...w, balance: w.balance - oldTransaction.amount }
+                            : w
+                    );
+                } else if (oldTransaction.type === 'expense') {
+                    updatedWallets = updatedWallets.map((w) =>
+                        w.id === oldTransaction.walletId
+                            ? { ...w, balance: w.balance + oldTransaction.amount }
+                            : w
+                    );
+                } else if (oldTransaction.type === 'transfer') {
+                    updatedWallets = updatedWallets.map((w) => {
+                        if (w.id === oldTransaction.walletId) {
+                            return { ...w, balance: w.balance + oldTransaction.amount };
+                        }
+                        if (w.id === oldTransaction.walletTargetId) {
+                            return { ...w, balance: w.balance - oldTransaction.amount };
+                        }
+                        return w;
+                    });
+                }
+
+                // Step 2: Apply the new transaction's effect on wallets
+                if (newTransaction.type === 'income') {
+                    updatedWallets = updatedWallets.map((w) =>
+                        w.id === newTransaction.walletId
+                            ? { ...w, balance: w.balance + newTransaction.amount }
+                            : w
+                    );
+                } else if (newTransaction.type === 'expense') {
+                    updatedWallets = updatedWallets.map((w) =>
+                        w.id === newTransaction.walletId
+                            ? { ...w, balance: w.balance - newTransaction.amount }
+                            : w
+                    );
+                } else if (newTransaction.type === 'transfer') {
+                    updatedWallets = updatedWallets.map((w) => {
+                        if (w.id === newTransaction.walletId) {
+                            return { ...w, balance: w.balance - newTransaction.amount };
+                        }
+                        if (w.id === newTransaction.walletTargetId) {
+                            return { ...w, balance: w.balance + newTransaction.amount };
+                        }
+                        return w;
+                    });
+                }
+
+                set({
                     transactions: state.transactions.map((t) =>
-                        t.id === id ? { ...t, ...updates } : t
+                        t.id === id ? newTransaction : t
                     ),
-                }));
+                    wallets: updatedWallets,
+                });
                 get().triggerAutoSync();
             },
 
@@ -699,6 +755,8 @@ export const useStore = create(
                         subscriptions: data.subscriptions || [],
                         settings: data.settings || initialState.settings,
                     });
+                    // Sync imported data to cloud
+                    get().triggerAutoSync();
                     return true;
                 } catch (error) {
                     console.error('Failed to import data:', error);
