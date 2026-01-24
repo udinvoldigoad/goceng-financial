@@ -8,7 +8,6 @@ import { toast } from '../components/ui/Toast';
 export default function Settings() {
     const {
         settings,
-        toggleTheme,
         updateSettings,
         resetAllData,
         exportData,
@@ -89,23 +88,7 @@ export default function Settings() {
                 <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
                     <h3 className="font-bold text-white mb-4">Preferensi</h3>
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight">
-                            <div className="flex items-center gap-3">
-                                <span className="material-symbols-outlined text-text-muted">dark_mode</span>
-                                <div>
-                                    <span className="text-white">Dark Mode</span>
-                                    <p className="text-xs text-text-muted">Tema gelap lebih nyaman untuk mata</p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={toggleTheme}
-                                className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors ${settings.theme === 'dark' ? 'bg-primary' : 'bg-surface-dark border border-border-dark'
-                                    }`}
-                            >
-                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings.theme === 'dark' ? 'right-1' : 'left-1'
-                                    }`}></div>
-                            </button>
-                        </div>
+
                         <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight">
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-text-muted">language</span>

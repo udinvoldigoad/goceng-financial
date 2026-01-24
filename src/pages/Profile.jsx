@@ -47,9 +47,6 @@ export default function Profile() {
                     <div className="text-center md:text-left flex-1">
                         <div className="flex flex-col md:flex-row items-center gap-3">
                             <h2 className="text-2xl font-bold text-white">{user?.name || 'User'}</h2>
-                            <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 text-xs font-medium border border-green-500/20">
-                                Pro Member
-                            </span>
                         </div>
                         <p className="text-text-muted mt-1">{user?.email || 'email@example.com'}</p>
                         <button
