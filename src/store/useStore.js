@@ -1,6 +1,25 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
+import { loadUserData, saveUserData } from '../services/supabaseSync';
+
+// Debounce utility for auto-save
+let saveTimeout = null;
+const debouncedSaveToCloud = (userId, getData) => {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(async () => {
+        const state = getData();
+        await saveUserData(userId, {
+            wallets: state.wallets,
+            assets: state.assets,
+            transactions: state.transactions,
+            budgets: state.budgets,
+            goals: state.goals,
+            subscriptions: state.subscriptions,
+            settings: state.settings,
+        });
+    }, 2000); // 2 second debounce
+};
 
 const STORAGE_VERSION = 1;
 
@@ -92,6 +111,27 @@ export const useStore = create(
                                 },
                                 showLoginModal: false, // Auto-close login modal on successful auth
                             });
+
+                            // Load data from cloud
+                            loadUserData(user.id).then(cloudData => {
+                                if (cloudData) {
+                                    console.log('📥 Loading data from cloud...');
+                                    set({
+                                        wallets: cloudData.wallets || [],
+                                        assets: cloudData.assets || [],
+                                        transactions: cloudData.transactions || [],
+                                        budgets: cloudData.budgets || [],
+                                        goals: cloudData.goals || [],
+                                        subscriptions: cloudData.subscriptions || [],
+                                        settings: { ...get().settings, ...cloudData.settings },
+                                    });
+                                } else {
+                                    // No cloud data - save current local data to cloud
+                                    console.log('📤 No cloud data found, syncing local data to cloud...');
+                                    debouncedSaveToCloud(user.id, get);
+                                }
+                            });
+
                             // Clean up URL after successful auth
                             if (window.location.hash || window.location.search.includes('code=')) {
                                 window.history.replaceState({}, '', window.location.pathname);
@@ -122,6 +162,22 @@ export const useStore = create(
                                         email: user.email || '',
                                         avatar: user.user_metadata?.avatar_url || '',
                                     },
+                                });
+
+                                // Load data from cloud for returning users
+                                loadUserData(user.id).then(cloudData => {
+                                    if (cloudData) {
+                                        console.log('📥 Loading data from cloud (returning user)...');
+                                        set({
+                                            wallets: cloudData.wallets || [],
+                                            assets: cloudData.assets || [],
+                                            transactions: cloudData.transactions || [],
+                                            budgets: cloudData.budgets || [],
+                                            goals: cloudData.goals || [],
+                                            subscriptions: cloudData.subscriptions || [],
+                                            settings: { ...get().settings, ...cloudData.settings },
+                                        });
+                                    }
                                 });
                             } else if (!hasAuthCallback) {
                                 set({ auth: { status: 'guest', user: null, session: null } });
@@ -174,6 +230,33 @@ export const useStore = create(
             openLoginModal: () => set({ showLoginModal: true }),
             closeLoginModal: () => set({ showLoginModal: false }),
 
+            // ==================== CLOUD SYNC ACTIONS ====================
+            syncToCloud: async () => {
+                const state = get();
+                if (state.auth.status !== 'authed' || !state.auth.user?.id) {
+                    console.log('Not authenticated, skipping cloud sync');
+                    return false;
+                }
+
+                return await saveUserData(state.auth.user.id, {
+                    wallets: state.wallets,
+                    assets: state.assets,
+                    transactions: state.transactions,
+                    budgets: state.budgets,
+                    goals: state.goals,
+                    subscriptions: state.subscriptions,
+                    settings: state.settings,
+                });
+            },
+
+            // Helper to trigger auto-sync (debounced)
+            triggerAutoSync: () => {
+                const state = get();
+                if (state.auth.status === 'authed' && state.auth.user?.id) {
+                    debouncedSaveToCloud(state.auth.user.id, get);
+                }
+            },
+
             // ==================== NOTIFICATION ACTIONS ====================
             addNotification: (notification) => {
                 const newNotification = {
@@ -214,6 +297,7 @@ export const useStore = create(
                     ...wallet,
                 };
                 set((state) => ({ wallets: [...state.wallets, newWallet] }));
+                get().triggerAutoSync();
                 return newWallet;
             },
 
@@ -223,12 +307,14 @@ export const useStore = create(
                         w.id === id ? { ...w, ...updates } : w
                     ),
                 }));
+                get().triggerAutoSync();
             },
 
             deleteWallet: (id) => {
                 set((state) => ({
                     wallets: state.wallets.filter((w) => w.id !== id),
                 }));
+                get().triggerAutoSync();
             },
 
             getWalletById: (id) => {
@@ -247,6 +333,7 @@ export const useStore = create(
                     ...asset,
                 };
                 set((state) => ({ assets: [...state.assets, newAsset] }));
+                get().triggerAutoSync();
                 return newAsset;
             },
 
@@ -256,12 +343,14 @@ export const useStore = create(
                         a.id === id ? { ...a, ...updates } : a
                     ),
                 }));
+                get().triggerAutoSync();
             },
 
             deleteAsset: (id) => {
                 set((state) => ({
                     assets: state.assets.filter((a) => a.id !== id),
                 }));
+                get().triggerAutoSync();
             },
 
             getTotalAssetValue: () => {
@@ -309,6 +398,7 @@ export const useStore = create(
                     wallets: updatedWallets,
                 });
 
+                get().triggerAutoSync();
                 return newTransaction;
             },
 
@@ -320,6 +410,7 @@ export const useStore = create(
                         t.id === id ? { ...t, ...updates } : t
                     ),
                 }));
+                get().triggerAutoSync();
             },
 
             deleteTransaction: (id) => {
@@ -358,6 +449,7 @@ export const useStore = create(
                     transactions: state.transactions.filter((t) => t.id !== id),
                     wallets: updatedWallets,
                 });
+                get().triggerAutoSync();
             },
 
             getTransactionsByDateRange: (startDate, endDate) => {
@@ -386,6 +478,7 @@ export const useStore = create(
                     ...budget,
                 };
                 set((state) => ({ budgets: [...state.budgets, newBudget] }));
+                get().triggerAutoSync();
                 return newBudget;
             },
 
@@ -395,12 +488,14 @@ export const useStore = create(
                         b.id === id ? { ...b, ...updates } : b
                     ),
                 }));
+                get().triggerAutoSync();
             },
 
             deleteBudget: (id) => {
                 set((state) => ({
                     budgets: state.budgets.filter((b) => b.id !== id),
                 }));
+                get().triggerAutoSync();
             },
 
             getBudgetSpent: (category, month) => {
@@ -426,6 +521,7 @@ export const useStore = create(
                     ...goal,
                 };
                 set((state) => ({ goals: [...state.goals, newGoal] }));
+                get().triggerAutoSync();
                 return newGoal;
             },
 
@@ -435,12 +531,14 @@ export const useStore = create(
                         g.id === id ? { ...g, ...updates } : g
                     ),
                 }));
+                get().triggerAutoSync();
             },
 
             deleteGoal: (id) => {
                 set((state) => ({
                     goals: state.goals.filter((g) => g.id !== id),
                 }));
+                get().triggerAutoSync();
             },
 
             addGoalContribution: (id, amount) => {
@@ -449,6 +547,7 @@ export const useStore = create(
                         g.id === id ? { ...g, currentAmount: g.currentAmount + amount } : g
                     ),
                 }));
+                get().triggerAutoSync();
             },
 
             // ==================== SUBSCRIPTION ACTIONS ====================
@@ -462,6 +561,7 @@ export const useStore = create(
                 set((state) => ({
                     subscriptions: [...state.subscriptions, newSubscription],
                 }));
+                get().triggerAutoSync();
                 return newSubscription;
             },
 
@@ -471,12 +571,14 @@ export const useStore = create(
                         s.id === id ? { ...s, ...updates } : s
                     ),
                 }));
+                get().triggerAutoSync();
             },
 
             deleteSubscription: (id) => {
                 set((state) => ({
                     subscriptions: state.subscriptions.filter((s) => s.id !== id),
                 }));
+                get().triggerAutoSync();
             },
 
             markSubscriptionPaid: (id) => {
