@@ -30,6 +30,7 @@ export default function BudgetForm({ isOpen, onClose, budget = null }) {
         handleSubmit,
         reset,
         control,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(budgetSchema),
@@ -40,9 +41,11 @@ export default function BudgetForm({ isOpen, onClose, budget = null }) {
         },
     });
 
-    // Get categories that don't already have a budget for the current month
+    const selectedMonth = watch('month');
+
+    // Get categories that don't already have a budget for the selected month
     const usedCategories = budgets
-        .filter(b => b.month === getCurrentMonth() && (!budget || b.id !== budget.id))
+        .filter(b => b.month === selectedMonth && (!budget || b.id !== budget.id))
         .map(b => b.category);
 
     const availableCategories = EXPENSE_CATEGORIES.filter(
