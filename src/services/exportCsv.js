@@ -1,8 +1,9 @@
-import { formatCurrency, formatDate } from './formatters';
+import { formatDate } from './formatters';
 import { getCategoryById } from '../models/categories';
+import XLSX from 'xlsx-js-style';
 
 /**
- * Export transactions to CSV and trigger download
+ * Export transactions to XLSX with styled header
  * @param {Array} transactions 
  * @param {Array} wallets - For wallet name lookup
  * @param {string} filename 
@@ -23,34 +24,63 @@ export function exportTransactionsCsv(transactions, wallets, filename = 'transak
         return wallet ? wallet.name : '-';
     };
 
-    const rows = transactions.map(t => {
+    // Create styled header row
+    const headerStyle = {
+        font: { bold: true, color: { rgb: 'FFFFFF' } },
+        fill: { fgColor: { rgb: '3399FF' } },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: {
+            top: { style: 'thin', color: { rgb: '000000' } },
+            bottom: { style: 'thin', color: { rgb: '000000' } },
+            left: { style: 'thin', color: { rgb: '000000' } },
+            right: { style: 'thin', color: { rgb: '000000' } },
+        }
+    };
+
+    const styledHeaders = headers.map(h => ({ v: h, t: 's', s: headerStyle }));
+
+    // Create data rows
+    const dataRows = transactions.map(t => {
         const category = getCategoryById(t.category);
+        const cellStyle = {
+            border: {
+                top: { style: 'thin', color: { rgb: 'CCCCCC' } },
+                bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
+                left: { style: 'thin', color: { rgb: 'CCCCCC' } },
+                right: { style: 'thin', color: { rgb: 'CCCCCC' } },
+            }
+        };
         return [
-            formatDate(t.date, 'medium'),
-            t.type === 'income' ? 'Pemasukan' : t.type === 'expense' ? 'Pengeluaran' : 'Transfer',
-            category ? category.name : t.category,
-            t.description || '-',
-            t.type === 'income' ? t.amount : -t.amount,
-            getWalletName(t.walletId),
-            t.walletTargetId ? getWalletName(t.walletTargetId) : '-',
+            { v: formatDate(t.date, 'medium'), t: 's', s: cellStyle },
+            { v: t.type === 'income' ? 'Pemasukan' : t.type === 'expense' ? 'Pengeluaran' : 'Transfer', t: 's', s: cellStyle },
+            { v: category ? category.name : t.category, t: 's', s: cellStyle },
+            { v: t.description || '-', t: 's', s: cellStyle },
+            { v: t.type === 'income' ? t.amount : -t.amount, t: 'n', s: { ...cellStyle, numFmt: '#,##0' } },
+            { v: getWalletName(t.walletId), t: 's', s: cellStyle },
+            { v: t.walletTargetId ? getWalletName(t.walletTargetId) : '-', t: 's', s: cellStyle },
         ];
     });
 
-    const csvContent = [
-        headers.join(','),
-        ...rows.map(row =>
-            row.map(cell => {
-                // Escape quotes and wrap in quotes if contains comma
-                const str = String(cell);
-                if (str.includes(',') || str.includes('"')) {
-                    return `"${str.replace(/"/g, '""')}"`;
-                }
-                return str;
-            }).join(',')
-        ),
-    ].join('\n');
+    // Create worksheet
+    const ws = XLSX.utils.aoa_to_sheet([styledHeaders, ...dataRows]);
 
-    downloadFile(csvContent, `${filename}-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+    // Set column widths
+    ws['!cols'] = [
+        { wch: 15 }, // Tanggal
+        { wch: 12 }, // Tipe
+        { wch: 15 }, // Kategori
+        { wch: 25 }, // Deskripsi
+        { wch: 15 }, // Jumlah
+        { wch: 15 }, // Wallet
+        { wch: 15 }, // Wallet Tujuan
+    ];
+
+    // Create workbook and add worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Transaksi');
+
+    // Generate and download file
+    XLSX.writeFile(wb, `${filename}-${new Date().toISOString().split('T')[0]}.xlsx`);
 }
 
 /**
