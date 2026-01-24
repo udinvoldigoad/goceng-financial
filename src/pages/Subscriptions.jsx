@@ -23,14 +23,11 @@ export default function Subscriptions() {
         subscriptions,
         wallets,
         deleteSubscription,
-        markSubscriptionPaid,
-        updateSubscription
     } = useStore();
 
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingSubscription, setEditingSubscription] = useState(null);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
-    const [filter, setFilter] = useState('all'); // all, active, paused
 
     const getWalletName = (walletId) => {
         const wallet = wallets.find(w => w.id === walletId);
@@ -49,14 +46,8 @@ export default function Subscriptions() {
     };
 
     const handleMarkPaid = (sub) => {
-        markSubscriptionPaid(sub.id);
-        toast.success(`${sub.name} ditandai sudah dibayar!`);
-    };
-
-    const handleToggleStatus = (sub) => {
-        const newStatus = sub.status === 'active' ? 'paused' : 'active';
-        updateSubscription(sub.id, { status: newStatus });
-        toast.success(`${sub.name} ${newStatus === 'active' ? 'diaktifkan' : 'dijeda'}!`);
+        deleteSubscription(sub.id);
+        toast.success(`${sub.name} sudah dibayar dan dihapus dari daftar!`);
     };
 
     const getCycleLabel = (cycle) => {
@@ -84,11 +75,6 @@ export default function Subscriptions() {
         if (days === 1) return 'Besok';
         return `${days} hari lagi`;
     };
-
-    const filteredSubscriptions = subscriptions.filter(sub => {
-        if (filter === 'all') return true;
-        return sub.status === filter;
-    });
 
     const activeSubscriptions = subscriptions.filter(s => s.status === 'active');
     const totalMonthly = activeSubscriptions.reduce((sum, sub) => {
@@ -164,28 +150,8 @@ export default function Subscriptions() {
                 </div>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex gap-2 mb-6">
-                {[
-                    { id: 'all', label: 'Semua' },
-                    { id: 'active', label: 'Aktif' },
-                    { id: 'paused', label: 'Dijeda' },
-                ].map(tab => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setFilter(tab.id)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === tab.id
-                                ? 'bg-primary text-white'
-                                : 'bg-surface-dark text-text-muted hover:text-white'
-                            }`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
             {/* Subscriptions List */}
-            {filteredSubscriptions.length === 0 ? (
+            {subscriptions.length === 0 ? (
                 <div className="bg-surface-dark border border-border-dark rounded-2xl p-12 text-center">
                     <span className="material-symbols-outlined text-5xl text-text-muted mb-4">subscriptions</span>
                     <h3 className="text-xl font-bold text-white mb-2">Belum Ada Langganan</h3>
@@ -199,7 +165,7 @@ export default function Subscriptions() {
                 </div>
             ) : (
                 <div className="space-y-3">
-                    {filteredSubscriptions.map((sub) => {
+                    {subscriptions.map((sub) => {
                         const daysUntil = getDaysUntilDue(sub.nextDueDate);
                         const isOverdue = daysUntil < 0;
                         const isUrgent = daysUntil >= 0 && daysUntil <= 3;
@@ -207,11 +173,9 @@ export default function Subscriptions() {
                         return (
                             <div
                                 key={sub.id}
-                                className={`bg-surface-dark border rounded-2xl p-4 md:p-5 ${sub.status === 'paused'
-                                        ? 'border-border-dark opacity-60'
-                                        : isOverdue
-                                            ? 'border-red-500/50'
-                                            : 'border-border-dark'
+                                className={`bg-surface-dark border rounded-2xl p-4 md:p-5 ${isOverdue
+                                    ? 'border-red-500/50'
+                                    : 'border-border-dark'
                                     }`}
                             >
                                 <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -221,14 +185,7 @@ export default function Subscriptions() {
                                             <span className="material-symbols-outlined text-[24px]">{sub.icon || 'subscriptions'}</span>
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                                <h3 className="font-bold text-white">{sub.name}</h3>
-                                                {sub.status === 'paused' && (
-                                                    <span className="px-2 py-0.5 rounded-full bg-gray-500/20 text-gray-400 text-xs">
-                                                        Dijeda
-                                                    </span>
-                                                )}
-                                            </div>
+                                            <h3 className="font-bold text-white">{sub.name}</h3>
                                             <div className="flex items-center gap-3 mt-1 text-sm text-text-muted">
                                                 <span>{getCycleLabel(sub.cycle)}</span>
                                                 <span>•</span>
@@ -241,36 +198,19 @@ export default function Subscriptions() {
                                     <div className="flex items-center gap-6">
                                         <div className="text-right">
                                             <p className="font-bold text-white text-lg">{formatCurrency(sub.amount)}</p>
-                                            {sub.status === 'active' && (
-                                                <p className={`text-xs ${isOverdue ? 'text-red-400' : isUrgent ? 'text-yellow-400' : 'text-text-muted'
-                                                    }`}>
-                                                    {getDueText(sub.nextDueDate)}
-                                                </p>
-                                            )}
+                                            <p className={`text-xs ${isOverdue ? 'text-red-400' : isUrgent ? 'text-yellow-400' : 'text-text-muted'}`}>
+                                                {getDueText(sub.nextDueDate)}
+                                            </p>
                                         </div>
 
                                         {/* Actions */}
                                         <div className="flex items-center gap-2">
-                                            {sub.status === 'active' && (
-                                                <button
-                                                    onClick={() => handleMarkPaid(sub)}
-                                                    className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
-                                                    title="Tandai Sudah Dibayar"
-                                                >
-                                                    <span className="material-symbols-outlined text-[20px]">check</span>
-                                                </button>
-                                            )}
                                             <button
-                                                onClick={() => handleToggleStatus(sub)}
-                                                className={`p-2 rounded-lg transition-colors ${sub.status === 'active'
-                                                        ? 'bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20'
-                                                        : 'bg-green-500/10 text-green-400 hover:bg-green-500/20'
-                                                    }`}
-                                                title={sub.status === 'active' ? 'Jeda' : 'Aktifkan'}
+                                                onClick={() => handleMarkPaid(sub)}
+                                                className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+                                                title="Tandai Sudah Dibayar"
                                             >
-                                                <span className="material-symbols-outlined text-[20px]">
-                                                    {sub.status === 'active' ? 'pause' : 'play_arrow'}
-                                                </span>
+                                                <span className="material-symbols-outlined text-[20px]">check</span>
                                             </button>
                                             <button
                                                 onClick={() => handleEdit(sub)}
