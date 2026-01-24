@@ -115,12 +115,12 @@ export function formatCompactCurrency(amount) {
 }
 
 /**
- * Calculate percentage
+ * Calculate percentage with 2 decimal places
  * @param {number} value 
  * @param {number} total 
  * @returns {number}
  */
 export function calculatePercentage(value, total) {
     if (total === 0) return 0;
-    return Math.round((value / total) * 100);
+    return parseFloat(((value / total) * 100).toFixed(2));
 }
