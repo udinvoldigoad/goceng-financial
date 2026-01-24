@@ -152,6 +152,57 @@ export default function Settings() {
                     </div>
                 </div>
 
+                {/* Notifications */}
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
+                    <h3 className="font-bold text-white mb-4">Notifikasi</h3>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-surface-highlight">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-text-muted">notifications</span>
+                                <div>
+                                    <span className="text-white">Notifikasi Browser</span>
+                                    <p className="text-xs text-text-muted">Terima notifikasi push di browser</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={async () => {
+                                    if ('Notification' in window) {
+                                        if (Notification.permission === 'granted') {
+                                            toast.success('Notifikasi sudah aktif!');
+                                        } else if (Notification.permission === 'denied') {
+                                            toast.error('Notifikasi diblokir. Aktifkan di pengaturan browser.');
+                                        } else {
+                                            const permission = await Notification.requestPermission();
+                                            if (permission === 'granted') {
+                                                toast.success('Notifikasi berhasil diaktifkan!');
+                                                new Notification('Goceng', {
+                                                    body: 'Notifikasi browser aktif!',
+                                                    icon: '/goceng.png'
+                                                });
+                                            } else {
+                                                toast.error('Izin notifikasi ditolak.');
+                                            }
+                                        }
+                                    } else {
+                                        toast.error('Browser tidak mendukung notifikasi');
+                                    }
+                                }}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
+                                        ? 'bg-green-500/20 text-green-400'
+                                        : 'bg-primary/20 text-primary hover:bg-primary/30'
+                                    }`}
+                            >
+                                {typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
+                                    ? '✓ Aktif'
+                                    : 'Aktifkan'}
+                            </button>
+                        </div>
+                        <p className="text-xs text-text-muted px-3">
+                            Notifikasi otomatis akan muncul untuk: tagihan jatuh tempo, anggaran hampir habis, dan progress goal.
+                        </p>
+                    </div>
+                </div>
+
                 {/* Data Management */}
                 <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
                     <h3 className="font-bold text-white mb-4">Kelola Data</h3>

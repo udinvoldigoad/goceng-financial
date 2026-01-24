@@ -16,14 +16,51 @@ import NotFound from './pages/NotFound';
 import ToastContainer from './components/ui/Toast';
 import LoginModal from './components/LoginModal';
 import LoadingScreen from './components/ui/LoadingScreen';
+import { runNotificationChecks, requestNotificationPermission, showBrowserNotification } from './services/notificationService';
 
 function App() {
-  const { settings, initAuth, isAppLoading, loadingMessage } = useStore();
+  const {
+    settings,
+    initAuth,
+    isAppLoading,
+    loadingMessage,
+    subscriptions,
+    budgets,
+    transactions,
+    goals,
+    notifications,
+    addNotification,
+  } = useStore();
 
   // Initialize auth on app mount
   useEffect(() => {
     initAuth();
   }, [initAuth]);
+
+  // Request notification permission on mount
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  // Check for notifications on data change
+  useEffect(() => {
+    if (isAppLoading) return;
+
+    const state = { subscriptions, budgets, transactions, goals, notifications };
+    const newNotifications = runNotificationChecks(state);
+
+    newNotifications.forEach(notification => {
+      addNotification(notification);
+
+      // Also show browser notification for alerts
+      if (notification.type === 'alert') {
+        showBrowserNotification(notification.title, {
+          body: notification.message,
+          tag: notification.id,
+        });
+      }
+    });
+  }, [subscriptions, budgets, transactions, goals, isAppLoading]);
 
   useEffect(() => {
     if (settings.theme === 'dark') {
