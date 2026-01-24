@@ -87,9 +87,25 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
         // Validation for sufficient balance
         if (data.type === 'expense' || data.type === 'transfer') {
             const wallet = wallets.find(w => w.id === data.walletId);
-            if (wallet && wallet.balance < data.amount) {
-                toast.error('Saldo tidak mencukupi! Saldo tersedia: Rp ' + new Intl.NumberFormat('id-ID').format(wallet.balance));
-                return;
+            if (wallet) {
+                // When editing, we need to consider the original transaction's effect on balance
+                let availableBalance = wallet.balance;
+
+                if (isEdit) {
+                    // If editing same wallet with expense/transfer, add back the original amount
+                    if (transaction.walletId === data.walletId) {
+                        if (transaction.type === 'expense' || transaction.type === 'transfer') {
+                            availableBalance += transaction.amount;
+                        } else if (transaction.type === 'income') {
+                            availableBalance -= transaction.amount;
+                        }
+                    }
+                }
+
+                if (availableBalance < data.amount) {
+                    toast.error('Saldo tidak mencukupi! Saldo tersedia: Rp ' + new Intl.NumberFormat('id-ID').format(availableBalance));
+                    return;
+                }
             }
         }
 
