@@ -15,6 +15,23 @@
   --font-family-display: 'Inter', sans-serif;
 }
 
+/* Smooth scroll for all platforms */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Fix mobile scroll and navbar issues */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Smooth scroll for scrollable containers */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar styles */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
