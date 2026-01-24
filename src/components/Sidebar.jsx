@@ -9,6 +9,7 @@ const navItems = [
     { name: 'Transaksi', icon: 'receipt_long', path: '/transactions' },
     { name: 'Anggaran', icon: 'pie_chart', path: '/budget' },
     { name: 'Goals', icon: 'flag', path: '/goals' },
+    { name: 'Langganan', icon: 'subscriptions', path: '/subscriptions' },
     { name: 'Laporan', icon: 'description', path: '/reports' },
 ];
 
