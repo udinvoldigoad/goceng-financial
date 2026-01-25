@@ -313,10 +313,6 @@ export default function Assets() {
                 danger
             />
 
-            {/* Footer */}
-            <footer className="mt-16 text-center pb-8">
-                <p className="text-text-muted text-xs">© {new Date().getFullYear()} Goceng Financial. Protected by 256-bit SSL encryption.</p>
-            </footer>
         </div>
     );
 }
