@@ -8,6 +8,7 @@ import EmptyState from '../components/ui/EmptyState';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
 import { useRequireAuth } from '../hooks/useRequireAuth';
+import { getIconContainerClasses } from '../services/colorUtils';
 
 export default function Assets() {
     const { wallets, subscriptions, deleteWallet, getUpcomingSubscriptions } = useStore();
@@ -158,7 +159,7 @@ export default function Assets() {
                                     <div className="flex flex-col justify-between h-36 md:h-48">
                                         <div className="flex justify-between items-start md:items-center">
                                             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 min-w-0">
-                                                <div className={`h-8 w-8 md:h-10 md:w-10 rounded-full bg-${wallet.color || 'cyan'}-500/20 flex items-center justify-center text-${wallet.color || 'cyan'}-400 shrink-0`}>
+                                                <div className={`h-8 w-8 md:h-10 md:w-10 rounded-full flex items-center justify-center shrink-0 ${getIconContainerClasses(wallet.color, 'cyan', 'light')}`}>
                                                     <span className="material-symbols-outlined text-[18px] md:text-[24px]">{wallet.icon || walletType?.icon || 'account_balance_wallet'}</span>
                                                 </div>
                                                 <div className="min-w-0">
@@ -231,7 +232,7 @@ export default function Assets() {
                                         className={`flex items-center justify-between p-4 hover:bg-surface-highlight transition-colors cursor-pointer ${index !== upcomingPayments.length - 1 ? 'border-b border-border-dark' : ''}`}
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className={`bg-${payment.color || 'red'}-500/20 text-${payment.color || 'red'}-400 rounded-lg size-12 flex items-center justify-center shrink-0`}>
+                                            <div className={`rounded-lg size-12 flex items-center justify-center shrink-0 ${getIconContainerClasses(payment.color, 'red', 'light')}`}>
                                                 <span className="material-symbols-outlined text-[24px]">{payment.icon || 'receipt'}</span>
                                             </div>
                                             <div className="flex flex-col">
@@ -314,7 +315,7 @@ export default function Assets() {
 
             {/* Footer */}
             <footer className="mt-16 text-center pb-8">
-                <p className="text-text-muted text-xs">© 2023 Goceng Financial. Protected by 256-bit SSL encryption.</p>
+                <p className="text-text-muted text-xs">© {new Date().getFullYear()} Goceng Financial. Protected by 256-bit SSL encryption.</p>
             </footer>
         </div>
     );

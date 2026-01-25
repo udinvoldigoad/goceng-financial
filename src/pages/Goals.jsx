@@ -8,6 +8,7 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
 import FormattedNumberInput from '../components/ui/FormattedNumberInput';
 import { useRequireAuth } from '../hooks/useRequireAuth';
+import { getIconContainerClasses, getTextColor } from '../services/colorUtils';
 
 export default function Goals() {
     const { goals, deleteGoal, addGoalContribution } = useStore();
@@ -104,7 +105,7 @@ export default function Goals() {
                                 )}
 
                                 <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
-                                    <div className={`h-8 w-8 md:h-12 md:w-12 rounded-xl bg-${goal.color || 'green'}-500/20 flex items-center justify-center text-${goal.color || 'green'}-400 shrink-0`}>
+                                    <div className={`h-8 w-8 md:h-12 md:w-12 rounded-xl flex items-center justify-center shrink-0 ${getIconContainerClasses(goal.color, 'green', 'light')}`}>
                                         <span className="material-symbols-outlined text-lg md:text-2xl">{goal.icon || 'flag'}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -140,7 +141,7 @@ export default function Goals() {
                                 </div>
 
                                 {deadlineStatus && (
-                                    <div className={`mb-3 md:mb-4 flex items-center gap-1 md:gap-2 text-[10px] md:text-xs text-${deadlineStatus.color}-400`}>
+                                    <div className={`mb-3 md:mb-4 flex items-center gap-1 md:gap-2 text-[10px] md:text-xs ${getTextColor(deadlineStatus.color)}`}>
                                         <span className="material-symbols-outlined text-xs md:text-sm">schedule</span>
                                         <span className="truncate">{deadlineStatus.text}</span>
                                     </div>

@@ -7,6 +7,7 @@ import useStore from '../../store/useStore';
 import Modal from '../ui/Modal';
 import { toast } from '../ui/Toast';
 import FormattedNumberInput from '../ui/FormattedNumberInput';
+import { getSelectedClasses, getBgDark50, getTextColor } from '../../services/colorUtils';
 
 const transactionSchema = z.object({
     type: z.enum(['income', 'expense', 'transfer']),
@@ -238,12 +239,9 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
                                     key={cat.id}
                                     type="button"
                                     onClick={() => setValue('category', cat.id)}
-                                    className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${watch('category') === cat.id
-                                        ? `bg-${cat.color}-900/30 border-${cat.color}-500 ring-1 ring-${cat.color}-500`
-                                        : 'bg-surface-highlight border-transparent hover:border-white/10'
-                                        }`}
+                                    className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${getSelectedClasses(cat.color, watch('category') === cat.id)}`}
                                 >
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-${cat.color}-900/50 text-${cat.color}-400`}>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getBgDark50(cat.color)} ${getTextColor(cat.color)}`}>
                                         <span className="material-symbols-outlined text-[18px]">{cat.icon}</span>
                                     </div>
                                     <span className={`text-[10px] text-center truncate w-full ${watch('category') === cat.id ? 'text-white font-medium' : 'text-text-muted'}`}>
@@ -288,6 +286,6 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
                     {isSubmitting ? 'Menyimpan...' : isEdit ? 'Simpan Perubahan' : 'Tambah Transaksi'}
                 </button>
             </form>
-        </Modal>
+        </Modal >
     );
 }

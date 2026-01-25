@@ -6,6 +6,7 @@ import { formatCurrency, formatCompactCurrency, getCurrentMonth, calculatePercen
 import { getMonthlyIncome, getMonthlyExpense, getDailyIncome, getDailyExpense, getWeeklyBreakdown, getBudgetSpent } from '../services/calculations';
 import { getCategoryById } from '../models/categories';
 import FormattedNumberInput from '../components/ui/FormattedNumberInput';
+import { getIconContainerClasses } from '../services/colorUtils';
 
 export default function Dashboard() {
     const {
@@ -245,7 +246,7 @@ export default function Dashboard() {
                                 return (
                                     <div key={tx.id} className="flex items-center justify-between gap-3 p-2 hover:bg-surface-highlight rounded-lg transition-colors cursor-default">
                                         <div className="flex items-center gap-3 overflow-hidden">
-                                            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-${category?.color || 'gray'}-900/20 text-${category?.color || 'gray'}-400`}>
+                                            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${getIconContainerClasses(category?.color, 'gray')}`}>
                                                 <span className="material-symbols-outlined text-[20px]">
                                                     {tx.type === 'transfer' ? 'swap_horiz' : category?.icon || 'receipt'}
                                                 </span>
@@ -294,7 +295,7 @@ export default function Dashboard() {
                             return (
                                 <div key={bill.id} className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-surface-highlight/20 transition-all hover:border-primary/20">
                                     <div className="flex items-center gap-4">
-                                        <div className={`h-12 w-12 rounded-full bg-${bill.color || 'cyan'}-900/30 flex items-center justify-center text-${bill.color || 'cyan'}-400`}>
+                                        <div className={`h-12 w-12 rounded-full flex items-center justify-center ${getIconContainerClasses(bill.color, 'cyan', 'dark30')}`}>
                                             <span className="material-symbols-outlined text-[24px]">{bill.icon || 'receipt'}</span>
                                         </div>
                                         <div>

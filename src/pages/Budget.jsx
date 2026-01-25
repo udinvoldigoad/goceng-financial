@@ -8,6 +8,7 @@ import EmptyState from '../components/ui/EmptyState';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
 import { useRequireAuth } from '../hooks/useRequireAuth';
+import { getIconContainerClasses } from '../services/colorUtils';
 
 export default function Budget() {
     const { budgets, transactions, deleteBudget, getBudgetsForMonth } = useStore();
@@ -144,7 +145,7 @@ export default function Budget() {
                             <div key={budget.id} className="bg-surface-dark border border-border-dark rounded-2xl p-4 relative group hover:border-border-dark/80 transition-all shadow-sm">
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-3 overflow-hidden">
-                                        <div className={`h-10 w-10 rounded-xl bg-${budget.color || 'blue'}-500/20 flex items-center justify-center text-${budget.color || 'blue'}-400 shrink-0`}>
+                                        <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${getIconContainerClasses(budget.color, 'blue', 'light')}`}>
                                             <span className="material-symbols-outlined text-[24px]">{budget.icon || category?.icon || 'pie_chart'}</span>
                                         </div>
                                         <div className="min-w-0 flex-1">

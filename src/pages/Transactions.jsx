@@ -8,6 +8,7 @@ import EmptyState from '../components/ui/EmptyState';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { toast } from '../components/ui/Toast';
 import { useRequireAuth } from '../hooks/useRequireAuth';
+import { getIconContainerClasses } from '../services/colorUtils';
 
 export default function Transactions() {
     const { transactions, wallets, deleteTransaction } = useStore();
@@ -108,7 +109,7 @@ export default function Transactions() {
                 onClick={() => handleEditTransaction(tx)}
             >
                 <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl bg-${category?.color || 'gray'}-900/20 flex items-center justify-center text-${category?.color || 'gray'}-400`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getIconContainerClasses(category?.color, 'gray')}`}>
                         <span className="material-symbols-outlined">
                             {tx.type === 'transfer' ? 'swap_horiz' : category?.icon || 'receipt'}
                         </span>

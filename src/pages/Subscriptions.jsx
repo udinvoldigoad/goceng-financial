@@ -4,6 +4,7 @@ import { formatCurrency } from '../services/formatters';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import SubscriptionForm from '../components/forms/SubscriptionForm';
 import { toast } from '../components/ui/Toast';
+import { getIconContainerClasses } from '../services/colorUtils';
 
 const SUBSCRIPTION_ICONS = [
     { id: 'subscriptions', icon: 'subscriptions', color: 'red' },
@@ -23,6 +24,7 @@ export default function Subscriptions() {
         subscriptions,
         wallets,
         deleteSubscription,
+        markSubscriptionPaid,
     } = useStore();
 
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -46,8 +48,14 @@ export default function Subscriptions() {
     };
 
     const handleMarkPaid = (sub) => {
-        deleteSubscription(sub.id);
-        toast.success(`${sub.name} sudah dibayar dan dihapus dari daftar!`);
+        const result = markSubscriptionPaid(sub.id);
+        if (result.success) {
+            toast.success(`${sub.name} dibayar! Transaksi senilai ${formatCurrency(sub.amount)} tercatat.`);
+        } else if (result.error === 'insufficient_balance') {
+            toast.error(`Saldo ${result.walletName} tidak cukup untuk membayar ${sub.name}`);
+        } else {
+            toast.error('Gagal memproses pembayaran');
+        }
     };
 
     const getCycleLabel = (cycle) => {
@@ -181,7 +189,7 @@ export default function Subscriptions() {
                                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                                     {/* Icon & Info */}
                                     <div className="flex items-center gap-4 flex-1">
-                                        <div className={`w-12 h-12 rounded-xl bg-${sub.color || 'cyan'}-900/30 flex items-center justify-center text-${sub.color || 'cyan'}-400 shrink-0`}>
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${getIconContainerClasses(sub.color, 'cyan', 'dark30')}`}>
                                             <span className="material-symbols-outlined text-[24px]">{sub.icon || 'subscriptions'}</span>
                                         </div>
                                         <div className="flex-1 min-w-0">
