@@ -653,7 +653,35 @@ export const useStore = create(
             markSubscriptionPaid: (id) => {
                 const state = get();
                 const subscription = state.subscriptions.find((s) => s.id === id);
-                if (!subscription) return;
+                if (!subscription) return { success: false, error: 'Subscription not found' };
+
+                // Check wallet balance before creating transaction
+                const wallet = state.wallets.find((w) => w.id === subscription.walletId);
+                if (wallet && wallet.balance < subscription.amount) {
+                    return { success: false, error: 'insufficient_balance', walletName: wallet.name };
+                }
+
+                // Create expense transaction for this payment
+                const newTransaction = {
+                    id: generateId(),
+                    createdAt: now(),
+                    type: 'expense',
+                    amount: subscription.amount,
+                    category: 'bills',
+                    description: `Pembayaran ${subscription.name}`,
+                    walletId: subscription.walletId,
+                    date: new Date().toISOString().split('T')[0],
+                };
+
+                // Update wallet balance
+                let updatedWallets = [...state.wallets];
+                if (subscription.walletId) {
+                    updatedWallets = updatedWallets.map((w) =>
+                        w.id === subscription.walletId
+                            ? { ...w, balance: w.balance - subscription.amount }
+                            : w
+                    );
+                }
 
                 // Calculate next due date based on cycle
                 const currentDue = new Date(subscription.nextDueDate);
@@ -674,12 +702,17 @@ export const useStore = create(
                 }
 
                 set((state) => ({
+                    transactions: [...state.transactions, newTransaction],
+                    wallets: updatedWallets,
                     subscriptions: state.subscriptions.map((s) =>
                         s.id === id
                             ? { ...s, nextDueDate: nextDue.toISOString().split('T')[0] }
                             : s
                     ),
                 }));
+
+                get().triggerAutoSync();
+                return { success: true, transaction: newTransaction };
             },
 
             getUpcomingSubscriptions: (days = 7) => {

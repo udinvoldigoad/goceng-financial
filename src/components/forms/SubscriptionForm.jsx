@@ -6,6 +6,7 @@ import useStore from '../../store/useStore';
 import Modal from '../ui/Modal';
 import { toast } from '../ui/Toast';
 import FormattedNumberInput from '../ui/FormattedNumberInput';
+import { getSelectedClasses, getBgDark50, getTextColor } from '../../services/colorUtils';
 
 const subscriptionSchema = z.object({
     name: z.string().min(1, 'Nama wajib diisi'),
@@ -137,12 +138,9 @@ export default function SubscriptionForm({ isOpen, onClose, subscription = null 
                                     setValue('icon', item.icon);
                                     setValue('color', item.color);
                                 }}
-                                className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${selectedIcon === item.icon
-                                        ? `bg-${item.color}-900/30 border-${item.color}-500 ring-1 ring-${item.color}-500`
-                                        : 'bg-surface-highlight border-transparent hover:border-white/10'
-                                    }`}
+                                className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${getSelectedClasses(item.color, selectedIcon === item.icon)}`}
                             >
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-${item.color}-900/50 text-${item.color}-400`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getBgDark50(item.color)} ${getTextColor(item.color)}`}>
                                     <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
                                 </div>
                             </button>
@@ -191,8 +189,8 @@ export default function SubscriptionForm({ isOpen, onClose, subscription = null 
                                 type="button"
                                 onClick={() => setValue('cycle', cycle.id)}
                                 className={`py-2.5 text-sm font-medium rounded-lg transition-all ${watch('cycle') === cycle.id
-                                        ? 'bg-primary text-white shadow-lg'
-                                        : 'bg-surface-highlight text-text-muted hover:text-white'
+                                    ? 'bg-primary text-white shadow-lg'
+                                    : 'bg-surface-highlight text-text-muted hover:text-white'
                                     }`}
                             >
                                 {cycle.label}
