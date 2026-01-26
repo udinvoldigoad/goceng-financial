@@ -86,10 +86,11 @@ body {
 
 /* Navbar scroll effect - blur & transparent */
 .navbar-scrolled {
-  background-color: rgba(18, 18, 18, 0.7) !important;
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-  border-bottom-color: rgba(42, 42, 42, 0.5) !important;
+  background-color: rgba(30, 30, 30, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(180%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.1) !important;
+  border-bottom-color: rgba(60, 60, 60, 0.6) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Page transition animation */

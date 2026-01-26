@@ -118,41 +118,41 @@ export default function Subscriptions() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                            <span className="material-symbols-outlined">subscriptions</span>
+            <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-4 mb-6">
+                <div className="bg-surface-dark border border-border-dark rounded-xl md:rounded-2xl p-3 md:p-5">
+                    <div className="flex flex-col md:flex-row items-center md:items-center gap-1 md:gap-3 mb-2 md:mb-3">
+                        <div className="p-1.5 md:p-2 rounded-lg bg-primary/10 text-primary">
+                            <span className="material-symbols-outlined text-[18px] md:text-[24px]">subscriptions</span>
                         </div>
-                        <span className="text-sm text-text-muted">Total Langganan</span>
+                        <span className="text-[10px] md:text-sm text-text-muted text-center md:text-left">Total</span>
                     </div>
-                    <p className="text-2xl font-bold text-white">{subscriptions.length}</p>
-                    <p className="text-xs text-text-muted mt-1">{activeSubscriptions.length} aktif</p>
+                    <p className="text-lg md:text-2xl font-bold text-white text-center md:text-left">{subscriptions.length}</p>
+                    <p className="text-[10px] md:text-xs text-text-muted mt-0.5 md:mt-1 text-center md:text-left">{activeSubscriptions.length} aktif</p>
                 </div>
 
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 rounded-lg bg-red-500/10 text-red-400">
-                            <span className="material-symbols-outlined">payments</span>
+                <div className="bg-surface-dark border border-border-dark rounded-xl md:rounded-2xl p-3 md:p-5">
+                    <div className="flex flex-col md:flex-row items-center md:items-center gap-1 md:gap-3 mb-2 md:mb-3">
+                        <div className="p-1.5 md:p-2 rounded-lg bg-red-500/10 text-red-400">
+                            <span className="material-symbols-outlined text-[18px] md:text-[24px]">payments</span>
                         </div>
-                        <span className="text-sm text-text-muted">Estimasi Bulanan</span>
+                        <span className="text-[10px] md:text-sm text-text-muted text-center md:text-left">Bulanan</span>
                     </div>
-                    <p className="text-2xl font-bold text-white">{formatCurrency(totalMonthly)}</p>
-                    <p className="text-xs text-text-muted mt-1">Per bulan</p>
+                    <p className="text-sm md:text-2xl font-bold text-white text-center md:text-left truncate">{formatCurrency(totalMonthly)}</p>
+                    <p className="text-[10px] md:text-xs text-text-muted mt-0.5 md:mt-1 text-center md:text-left">Per bulan</p>
                 </div>
 
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-400">
-                            <span className="material-symbols-outlined">schedule</span>
+                <div className="bg-surface-dark border border-border-dark rounded-xl md:rounded-2xl p-3 md:p-5">
+                    <div className="flex flex-col md:flex-row items-center md:items-center gap-1 md:gap-3 mb-2 md:mb-3">
+                        <div className="p-1.5 md:p-2 rounded-lg bg-yellow-500/10 text-yellow-400">
+                            <span className="material-symbols-outlined text-[18px] md:text-[24px]">schedule</span>
                         </div>
-                        <span className="text-sm text-text-muted">Jatuh Tempo Minggu Ini</span>
+                        <span className="text-[10px] md:text-sm text-text-muted text-center md:text-left">Jatuh Tempo</span>
                     </div>
-                    <p className="text-2xl font-bold text-white">{upcomingThisWeek.length}</p>
-                    <p className="text-xs text-text-muted mt-1">
+                    <p className="text-lg md:text-2xl font-bold text-white text-center md:text-left">{upcomingThisWeek.length}</p>
+                    <p className="text-[10px] md:text-xs text-text-muted mt-0.5 md:mt-1 text-center md:text-left">
                         {upcomingThisWeek.length > 0
-                            ? `Total ${formatCurrency(upcomingThisWeek.reduce((s, sub) => s + sub.amount, 0))}`
-                            : 'Tidak ada tagihan'
+                            ? `${formatCurrency(upcomingThisWeek.reduce((s, sub) => s + sub.amount, 0))}`
+                            : 'Tidak ada'
                         }
                     </p>
                 </div>
