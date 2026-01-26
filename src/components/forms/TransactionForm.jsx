@@ -7,7 +7,6 @@ import useStore from '../../store/useStore';
 import Modal from '../ui/Modal';
 import { toast } from '../ui/Toast';
 import FormattedNumberInput from '../ui/FormattedNumberInput';
-import { getSelectedClasses, getBgDark50, getTextColor } from '../../services/colorUtils';
 
 const transactionSchema = z.object({
     type: z.enum(['income', 'expense', 'transfer']),
@@ -16,7 +15,7 @@ const transactionSchema = z.object({
     walletId: z.string().min(1, 'Wallet wajib dipilih'),
     date: z.string(),
     description: z.string().optional(),
-    walletTargetId: z.string().optional(), // For transfer only
+    walletTargetId: z.string().optional(),
 }).refine((data) => {
     if (data.type === 'transfer' && !data.walletTargetId) {
         return false;
@@ -57,7 +56,6 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
 
     const type = watch('type');
 
-    // Reset when opening/closing or editing
     useEffect(() => {
         if (isOpen) {
             if (transaction) {
@@ -85,15 +83,12 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
     }, [isOpen, transaction, wallets, reset]);
 
     const onSubmit = (data) => {
-        // Validation for sufficient balance
         if (data.type === 'expense' || data.type === 'transfer') {
             const wallet = wallets.find(w => w.id === data.walletId);
             if (wallet) {
-                // When editing, we need to consider the original transaction's effect on balance
                 let availableBalance = wallet.balance;
 
                 if (isEdit) {
-                    // If editing same wallet with expense/transfer, add back the original amount
                     if (transaction.walletId === data.walletId) {
                         if (transaction.type === 'expense' || transaction.type === 'transfer') {
                             availableBalance += transaction.amount;
@@ -128,50 +123,61 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
             onClose={onClose}
             title={isEdit ? 'Edit Transaksi' : 'Tambah Transaksi'}
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                {/* Type Toggle */}
-                <div className="grid grid-cols-3 gap-2 p-1 bg-surface-dark border border-border-dark rounded-xl">
-                    {['expense', 'income', 'transfer'].map((t) => (
-                        <button
-                            key={t}
-                            type="button"
-                            onClick={() => setValue('type', t)}
-                            className={`py-2 text-sm font-medium rounded-lg transition-all ${type === t
-                                ? t === 'income' ? 'bg-green-500 text-white shadow-lg'
-                                    : t === 'transfer' ? 'bg-blue-500 text-white shadow-lg'
-                                        : 'bg-red-500 text-white shadow-lg'
-                                : 'text-text-muted hover:text-white hover:bg-white/5'
-                                }`}
-                        >
-                            {t === 'income' ? 'Pemasukan' : t === 'transfer' ? 'Transfer' : 'Pengeluaran'}
-                        </button>
-                    ))}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                {/* Type Toggle - Tab Style */}
+                <div className="flex gap-2">
+                    <button
+                        type="button"
+                        onClick={() => setValue('type', 'expense')}
+                        className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-all ${type === 'expense'
+                                ? 'bg-red-500 text-white'
+                                : 'bg-surface-highlight text-text-muted hover:text-white'
+                            }`}
+                    >
+                        Pengeluaran
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setValue('type', 'income')}
+                        className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-all ${type === 'income'
+                                ? 'bg-green-500 text-white'
+                                : 'bg-surface-highlight text-text-muted hover:text-white'
+                            }`}
+                    >
+                        Pemasukan
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setValue('type', 'transfer')}
+                        className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-all ${type === 'transfer'
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-surface-highlight text-text-muted hover:text-white'
+                            }`}
+                    >
+                        Transfer
+                    </button>
                 </div>
 
-                {/* Amount */}
+                {/* Amount - Large Style */}
                 <div>
-                    <label className="block text-sm font-medium text-text-muted mb-1.5">
+                    <label className="block text-sm font-medium text-text-muted mb-2">
                         Jumlah
                     </label>
-                    <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-bold">Rp</span>
-                        <Controller
-                            name="amount"
-                            control={control}
-                            render={({ field: { onChange, value } }) => (
-                                <FormattedNumberInput
-                                    value={value}
-                                    onChange={onChange}
-                                    className="w-full pl-12 pr-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white font-bold text-lg placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                                    placeholder="0"
-                                />
-                            )}
-                        />
-                    </div>
+                    <Controller
+                        name="amount"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <FormattedNumberInput
+                                value={value}
+                                onChange={onChange}
+                                className="w-full px-4 py-4 bg-surface-highlight border border-border-dark rounded-xl text-white font-bold text-2xl placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="0"
+                            />
+                        )}
+                    />
                     {errors.amount && (
                         <p className="mt-1 text-sm text-red-400">{errors.amount.message}</p>
                     )}
-                    {/* Real-time balance warning */}
                     {(type === 'expense' || type === 'transfer') && (() => {
                         const selectedWallet = wallets.find(w => w.id === watch('walletId'));
                         const currentAmount = watch('amount');
@@ -186,36 +192,82 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
                     })()}
                 </div>
 
-                {/* Wallet & Target Wallet (for transfer) */}
-                <div className="grid grid-cols-1 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-text-muted mb-1.5">
-                            {type === 'transfer' ? 'Dari Wallet' : 'Wallet'}
-                        </label>
-                        <select
-                            {...register('walletId')}
-                            className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
-                        >
-                            <option value="" disabled>Pilih Wallet</option>
-                            {wallets.map(w => (
-                                <option key={w.id} value={w.id}>{w.name} ({new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(w.balance)})</option>
-                            ))}
-                        </select>
-                        {errors.walletId && (
-                            <p className="mt-1 text-sm text-red-400">{errors.walletId.message}</p>
-                        )}
-                    </div>
+                {/* Description */}
+                <div>
+                    <label className="block text-sm font-medium text-text-muted mb-2">
+                        Deskripsi
+                    </label>
+                    <input
+                        type="text"
+                        {...register('description')}
+                        className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-xl text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="Ini untuk apa?"
+                    />
+                </div>
 
-                    {type === 'transfer' && (
+                {/* Category & Wallet - Side by Side */}
+                {type !== 'transfer' ? (
+                    <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-text-muted mb-1.5">
-                                Ke Wallet
+                            <label className="block text-sm font-medium text-text-muted mb-2">
+                                Kategori
+                            </label>
+                            <select
+                                {...register('category')}
+                                className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                            >
+                                <option value="" disabled>Pilih...</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-text-muted mb-2">
+                                Dompet
+                            </label>
+                            <select
+                                {...register('walletId')}
+                                className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                            >
+                                <option value="" disabled>Pilih...</option>
+                                {wallets.map(w => (
+                                    <option key={w.id} value={w.id}>{w.name}</option>
+                                ))}
+                            </select>
+                            {errors.walletId && (
+                                <p className="mt-1 text-sm text-red-400">{errors.walletId.message}</p>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-text-muted mb-2">
+                                Dari Dompet
+                            </label>
+                            <select
+                                {...register('walletId')}
+                                className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                            >
+                                <option value="" disabled>Pilih...</option>
+                                {wallets.map(w => (
+                                    <option key={w.id} value={w.id}>{w.name}</option>
+                                ))}
+                            </select>
+                            {errors.walletId && (
+                                <p className="mt-1 text-sm text-red-400">{errors.walletId.message}</p>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-text-muted mb-2">
+                                Ke Dompet
                             </label>
                             <select
                                 {...register('walletTargetId')}
-                                className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
+                                className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
                             >
-                                <option value="" disabled>Pilih Wallet Tujuan</option>
+                                <option value="" disabled>Pilih...</option>
                                 {wallets.filter(w => w.id !== watch('walletId')).map(w => (
                                     <option key={w.id} value={w.id}>{w.name}</option>
                                 ))}
@@ -224,68 +276,36 @@ export default function TransactionForm({ isOpen, onClose, transaction = null })
                                 <p className="mt-1 text-sm text-red-400">{errors.walletTargetId.message}</p>
                             )}
                         </div>
-                    )}
-                </div>
-
-                {/* Category (Hide for transfer) */}
-                {type !== 'transfer' && (
-                    <div>
-                        <label className="block text-sm font-medium text-text-muted mb-1.5">
-                            Kategori
-                        </label>
-                        <div className="grid grid-cols-4 gap-2 max-h-[160px] overflow-y-auto p-1 custom-scrollbar">
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat.id}
-                                    type="button"
-                                    onClick={() => setValue('category', cat.id)}
-                                    className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${getSelectedClasses(cat.color, watch('category') === cat.id)}`}
-                                >
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getBgDark50(cat.color)} ${getTextColor(cat.color)}`}>
-                                        <span className="material-symbols-outlined text-[18px]">{cat.icon}</span>
-                                    </div>
-                                    <span className={`text-[10px] text-center truncate w-full ${watch('category') === cat.id ? 'text-white font-medium' : 'text-text-muted'}`}>
-                                        {cat.name}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
                     </div>
                 )}
 
-                {/* Date & Description */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-text-muted mb-1.5">
-                            Tanggal
-                        </label>
+                {/* Date */}
+                <div>
+                    <label className="block text-sm font-medium text-text-muted mb-2">
+                        Tanggal
+                    </label>
+                    <div className="relative">
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">calendar_today</span>
                         <input
                             type="date"
                             {...register('date')}
-                            className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:dark]"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-text-muted mb-1.5">
-                            Catatan (Opsional)
-                        </label>
-                        <input
-                            type="text"
-                            {...register('description')}
-                            className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                            placeholder="e.g. Makan siang"
+                            className="w-full pl-12 pr-4 py-3 bg-surface-highlight border border-border-dark rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:dark]"
                         />
                     </div>
                 </div>
 
+                {/* Submit Button */}
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors mt-4 disabled:opacity-50"
+                    className={`w-full py-3.5 font-bold rounded-xl transition-colors mt-2 disabled:opacity-50 ${type === 'expense' ? 'bg-red-500 hover:bg-red-600 text-white' :
+                            type === 'income' ? 'bg-green-500 hover:bg-green-600 text-white' :
+                                'bg-blue-500 hover:bg-blue-600 text-white'
+                        }`}
                 >
                     {isSubmitting ? 'Menyimpan...' : isEdit ? 'Simpan Perubahan' : 'Tambah Transaksi'}
                 </button>
             </form>
-        </Modal >
+        </Modal>
     );
 }

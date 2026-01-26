@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { WALLET_TYPES } from '../../models/categories';
+import { WALLET_TYPES, WALLET_COLORS } from '../../models/categories';
 import useStore from '../../store/useStore';
 import Modal from '../ui/Modal';
 import { toast } from '../ui/Toast';
@@ -10,18 +10,14 @@ import FormattedNumberInput from '../ui/FormattedNumberInput';
 
 const walletSchema = z.object({
     name: z.string().min(1, 'Nama wallet wajib diisi'),
-    type: z.enum(['bank', 'ewallet', 'cash', 'savings', 'investment']),
+    type: z.string(),
     accountNumber: z.string().optional(),
     balance: z.coerce.number().min(0, 'Saldo tidak boleh negatif'),
     color: z.string().optional(),
 });
 
 /**
- * Wallet form component for add/edit
- * @param {Object} props
- * @param {boolean} props.isOpen
- * @param {function} props.onClose
- * @param {Object} [props.wallet] - Existing wallet for edit mode
+ * Wallet form component for add/edit with visual type and color selector
  */
 export default function WalletForm({ isOpen, onClose, wallet = null }) {
     const { addWallet, updateWallet } = useStore();
@@ -32,6 +28,8 @@ export default function WalletForm({ isOpen, onClose, wallet = null }) {
         handleSubmit,
         reset,
         control,
+        watch,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(walletSchema),
@@ -43,6 +41,9 @@ export default function WalletForm({ isOpen, onClose, wallet = null }) {
             color: 'blue',
         },
     });
+
+    const selectedType = watch('type');
+    const selectedColor = watch('color');
 
     // Effect to reset form when wallet prop changes
     useEffect(() => {
@@ -73,7 +74,6 @@ export default function WalletForm({ isOpen, onClose, wallet = null }) {
         const walletData = {
             ...data,
             icon: walletType?.icon || 'account_balance_wallet',
-            color: walletType?.color || 'blue',
         };
 
         if (isEdit) {
@@ -97,54 +97,81 @@ export default function WalletForm({ isOpen, onClose, wallet = null }) {
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            title={isEdit ? 'Edit Wallet' : 'Tambah Wallet Baru'}
+            title={isEdit ? 'Edit Dompet' : 'Tambah Dompet'}
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                {/* Wallet Name */}
                 <div>
-                    <label className="block text-sm font-medium text-text-muted mb-1.5">
-                        Nama Wallet
+                    <label className="block text-sm font-medium text-text-muted mb-2">
+                        Wallet Name
                     </label>
                     <input
                         type="text"
                         {...register('name')}
                         className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="e.g. BCA, GoPay, Dompet"
+                        placeholder="e.g. BCA Savings"
                     />
                     {errors.name && (
                         <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
                     )}
                 </div>
 
+                {/* Type Selector - Grid */}
                 <div>
-                    <label className="block text-sm font-medium text-text-muted mb-1.5">
-                        Tipe Wallet
+                    <label className="block text-sm font-medium text-text-muted mb-3">
+                        Type
                     </label>
-                    <select
-                        {...register('type')}
-                        className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                    >
+                    <div className="grid grid-cols-4 gap-2">
                         {WALLET_TYPES.map((type) => (
-                            <option key={type.id} value={type.id}>
-                                {type.name}
-                            </option>
+                            <button
+                                key={type.id}
+                                type="button"
+                                onClick={() => setValue('type', type.id)}
+                                className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${selectedType === type.id
+                                        ? 'border-primary bg-primary/10'
+                                        : 'border-transparent bg-surface-highlight hover:bg-surface-highlight/80'
+                                    }`}
+                            >
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${selectedType === type.id ? 'bg-primary/20' : 'bg-surface-dark'
+                                    }`}>
+                                    <span className={`material-symbols-outlined text-[20px] ${selectedType === type.id ? 'text-primary' : 'text-text-muted'
+                                        }`}>
+                                        {type.icon}
+                                    </span>
+                                </div>
+                                <span className={`text-xs font-medium ${selectedType === type.id ? 'text-white' : 'text-text-muted'
+                                    }`}>
+                                    {type.name}
+                                </span>
+                            </button>
                         ))}
-                    </select>
+                    </div>
                 </div>
 
+                {/* Color Selector */}
                 <div>
-                    <label className="block text-sm font-medium text-text-muted mb-1.5">
-                        Nomor Rekening (Opsional)
+                    <label className="block text-sm font-medium text-text-muted mb-3">
+                        Warna
                     </label>
-                    <input
-                        type="text"
-                        {...register('accountNumber')}
-                        className="w-full px-4 py-3 bg-surface-highlight border border-border-dark rounded-lg text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="e.g. **** 4829"
-                    />
+                    <div className="flex flex-wrap gap-3">
+                        {WALLET_COLORS.map((colorOption) => (
+                            <button
+                                key={colorOption.id}
+                                type="button"
+                                onClick={() => setValue('color', colorOption.id)}
+                                className={`w-10 h-10 rounded-full transition-all ${selectedColor === colorOption.id
+                                        ? 'ring-2 ring-white ring-offset-2 ring-offset-surface-dark scale-110'
+                                        : 'hover:scale-105'
+                                    }`}
+                                style={{ backgroundColor: colorOption.color }}
+                            />
+                        ))}
+                    </div>
                 </div>
 
+                {/* Saldo Awal */}
                 <div>
-                    <label className="block text-sm font-medium text-text-muted mb-1.5">
+                    <label className="block text-sm font-medium text-text-muted mb-2">
                         Saldo Awal
                     </label>
                     <Controller
@@ -167,9 +194,9 @@ export default function WalletForm({ isOpen, onClose, wallet = null }) {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors mt-6 disabled:opacity-50"
+                    className="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors mt-4 disabled:opacity-50"
                 >
-                    {isSubmitting ? 'Menyimpan...' : isEdit ? 'Update Wallet' : 'Tambah Wallet'}
+                    {isSubmitting ? 'Menyimpan...' : isEdit ? 'Update Dompet' : 'Tambah Dompet'}
                 </button>
             </form>
         </Modal>
