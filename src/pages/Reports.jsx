@@ -82,7 +82,7 @@ export default function Reports() {
     return (
         <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex flex-wrap items-end justify-between gap-6 mb-8">
+            <div className="flex flex-wrap items-end justify-between gap-6 mb-8 animate-stagger-in" style={{ animationDelay: '0s' }}>
                 <div>
                     <h1 className="text-2xl font-bold text-white">Laporan Keuangan</h1>
                     <p className="text-text-muted mt-1">Analisis dan pantau perkembangan keuanganmu.</p>
@@ -108,7 +108,7 @@ export default function Reports() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8 animate-stagger-in" style={{ animationDelay: '0.1s' }}>
                 <div className="bg-surface-dark border border-border-dark rounded-2xl p-3 sm:p-5">
                     <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                         <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/10 text-green-400">
@@ -155,7 +155,7 @@ export default function Reports() {
             </div>
 
             {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 animate-stagger-in" style={{ animationDelay: '0.2s' }}>
                 {/* Category Breakdown Pie Chart */}
                 <div className="bg-surface-dark border border-border-dark rounded-2xl p-6">
                     <h3 className="text-lg font-bold text-white mb-6">Pengeluaran per Kategori</h3>
@@ -264,7 +264,7 @@ export default function Reports() {
             </div>
 
             {/* Transaction Summary */}
-            <div className="bg-surface-dark border border-border-dark rounded-2xl p-6">
+            <div className="bg-surface-dark border border-border-dark rounded-2xl p-6 animate-stagger-in" style={{ animationDelay: '0.3s' }}>
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-bold text-white">Ringkasan {formatMonth(selectedMonth)}</h3>
                     <span className="text-sm text-text-muted">{monthTransactions.length} transaksi</span>

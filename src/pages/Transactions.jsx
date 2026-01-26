@@ -21,6 +21,8 @@ export default function Transactions() {
     const [filterType, setFilterType] = useState('');
     const [filterWallet, setFilterWallet] = useState('');
     const [sortOrder, setSortOrder] = useState('newest');
+    const [dateFilter, setDateFilter] = useState('all'); // all, today, week, month
+    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
     // Auth-protected action handlers
     const handleAddTransaction = () => requireAuth(() => setShowAddTransaction(true));
@@ -34,6 +36,26 @@ export default function Transactions() {
     // Filter and sort transactions
     const filteredTransactions = useMemo(() => {
         let result = [...transactions];
+
+        // Date filter
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (dateFilter === 'today') {
+            result = result.filter(t => {
+                const txDate = new Date(t.date);
+                txDate.setHours(0, 0, 0, 0);
+                return txDate.getTime() === today.getTime();
+            });
+        } else if (dateFilter === 'week') {
+            const weekAgo = new Date(today);
+            weekAgo.setDate(today.getDate() - 7);
+            result = result.filter(t => new Date(t.date) >= weekAgo);
+        } else if (dateFilter === 'month') {
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(today.getMonth() - 1);
+            result = result.filter(t => new Date(t.date) >= monthAgo);
+        }
 
         // Search filter
         if (searchQuery) {
@@ -77,7 +99,7 @@ export default function Transactions() {
         });
 
         return result;
-    }, [transactions, searchQuery, filterCategory, filterType, filterWallet, sortOrder]);
+    }, [transactions, searchQuery, filterCategory, filterType, filterWallet, sortOrder, dateFilter]);
 
     // Group by date
     const groupedTransactions = useMemo(() => {
@@ -153,15 +175,22 @@ export default function Transactions() {
     return (
         <div className="relative max-w-6xl mx-auto">
             {/* Header */}
-            <header className="flex justify-between items-center mb-8">
+            <header className="flex justify-between items-center mb-8 animate-stagger-in" style={{ animationDelay: '0s' }}>
                 <div>
                     <h2 className="text-2xl font-bold text-white">Riwayat Transaksi</h2>
                     <p className="text-text-muted mt-1">Kelola dan pantau arus kas keuanganmu.</p>
                 </div>
+                <button
+                    onClick={handleAddTransaction}
+                    className="flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold tracking-wide"
+                >
+                    <span className="material-symbols-outlined text-[18px]">add</span>
+                    <span>Tambah Transaksi</span>
+                </button>
             </header>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-stagger-in" style={{ animationDelay: '0.1s' }}>
                 <div className="p-6 rounded-2xl bg-surface-dark border border-border-dark shadow-sm relative overflow-hidden group">
                     <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <span className="material-symbols-outlined text-9xl text-green-500">trending_up</span>
@@ -196,59 +225,146 @@ export default function Transactions() {
                 </div>
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-col gap-4 mb-6">
-                <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">search</span>
+            {/* New Search and Filter Bar */}
+            <div className="flex flex-col md:flex-row gap-3 mb-6 animate-stagger-in" style={{ animationDelay: '0.2s' }}>
+                {/* Search Bar */}
+                <div className="relative flex-1">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
                     <input
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm placeholder-text-muted text-white"
-                        placeholder="Cari transaksi..."
+                        className="w-full pl-12 pr-4 py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm placeholder-text-muted text-white"
+                        placeholder="Search"
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
-                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
-                    <select
-                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
-                        value={filterCategory}
-                        onChange={(e) => setFilterCategory(e.target.value)}
+
+                {/* Quick Date Filters */}
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setDateFilter('all')}
+                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'all'
+                            ? 'bg-primary text-white'
+                            : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
+                            }`}
                     >
-                        <option value="">Semua Kategori</option>
-                        {allCategories.map(cat => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                    </select>
-                    <select
-                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
+                        All
+                    </button>
+                    <button
+                        onClick={() => setDateFilter('today')}
+                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'today'
+                            ? 'bg-primary text-white'
+                            : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
+                            }`}
                     >
-                        <option value="">Semua Tipe</option>
-                        <option value="income">Pemasukan</option>
-                        <option value="expense">Pengeluaran</option>
-                        <option value="transfer">Transfer</option>
-                    </select>
-                    <select
-                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
-                        value={filterWallet}
-                        onChange={(e) => setFilterWallet(e.target.value)}
+                        Today
+                    </button>
+                    <button
+                        onClick={() => setDateFilter('week')}
+                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'week'
+                            ? 'bg-primary text-white'
+                            : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
+                            }`}
                     >
-                        <option value="">Semua Wallet</option>
-                        {wallets.map(w => (
-                            <option key={w.id} value={w.id}>{w.name}</option>
-                        ))}
-                    </select>
-                    <select
-                        className="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-surface-dark border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm font-medium text-white appearance-none cursor-pointer"
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value)}
+                        This Week
+                    </button>
+                    <button
+                        onClick={() => setDateFilter('month')}
+                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'month'
+                            ? 'bg-primary text-white'
+                            : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
+                            }`}
                     >
-                        <option value="newest">Terbaru</option>
-                        <option value="oldest">Terlama</option>
-                        <option value="highest">Tertinggi</option>
-                        <option value="lowest">Terendah</option>
-                    </select>
+                        This Month
+                    </button>
+
+                    {/* Filter Dropdown Button */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium bg-surface-dark text-text-muted hover:text-white border border-border-dark transition-all"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">filter_list</span>
+                            <span>Filter</span>
+                            <span className="material-symbols-outlined text-[16px]">
+                                {showFilterDropdown ? 'expand_less' : 'expand_more'}
+                            </span>
+                        </button>
+
+                        {/* Filter Dropdown */}
+                        {showFilterDropdown && (
+                            <div className="absolute right-0 top-14 w-80 bg-surface-dark border border-border-dark rounded-xl shadow-2xl p-4 z-50 space-y-3">
+                                <div>
+                                    <label className="block text-xs text-text-muted mb-2">Kategori</label>
+                                    <select
+                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                        value={filterCategory}
+                                        onChange={(e) => setFilterCategory(e.target.value)}
+                                    >
+                                        <option value="">Semua Kategori</option>
+                                        {allCategories.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs text-text-muted mb-2">Tipe</label>
+                                    <select
+                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                        value={filterType}
+                                        onChange={(e) => setFilterType(e.target.value)}
+                                    >
+                                        <option value="">Semua Tipe</option>
+                                        <option value="income">Pemasukan</option>
+                                        <option value="expense">Pengeluaran</option>
+                                        <option value="transfer">Transfer</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs text-text-muted mb-2">Wallet</label>
+                                    <select
+                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                        value={filterWallet}
+                                        onChange={(e) => setFilterWallet(e.target.value)}
+                                    >
+                                        <option value="">Semua Wallet</option>
+                                        {wallets.map(w => (
+                                            <option key={w.id} value={w.id}>{w.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs text-text-muted mb-2">Urutkan</label>
+                                    <select
+                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                        value={sortOrder}
+                                        onChange={(e) => setSortOrder(e.target.value)}
+                                    >
+                                        <option value="newest">Terbaru</option>
+                                        <option value="oldest">Terlama</option>
+                                        <option value="highest">Tertinggi</option>
+                                        <option value="lowest">Terendah</option>
+                                    </select>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setFilterCategory('');
+                                        setFilterType('');
+                                        setFilterWallet('');
+                                        setSortOrder('newest');
+                                        setShowFilterDropdown(false);
+                                    }}
+                                    className="w-full py-2 text-sm text-primary hover:text-primary/80 font-medium"
+                                >
+                                    Reset Semua Filter
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -271,6 +387,7 @@ export default function Transactions() {
                             setFilterCategory('');
                             setFilterType('');
                             setFilterWallet('');
+                            setDateFilter('all');
                         }}
                         className="mt-4 text-primary hover:underline"
                     >
@@ -294,13 +411,7 @@ export default function Transactions() {
                 </div>
             )}
 
-            {/* FAB - Add Transaction */}
-            <button
-                onClick={handleAddTransaction}
-                className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-primary text-white shadow-lg shadow-primary/40 flex items-center justify-center hover:bg-blue-600 transition-colors transform hover:scale-105 active:scale-95 z-50"
-            >
-                <span className="material-symbols-outlined text-3xl">add</span>
-            </button>
+
 
             {/* Transaction Form Modal */}
             <TransactionForm

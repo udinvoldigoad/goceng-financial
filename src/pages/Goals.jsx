@@ -61,7 +61,7 @@ export default function Goals() {
     return (
         <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex flex-wrap items-end justify-between gap-6 mb-8">
+            <div className="flex flex-wrap items-end justify-between gap-6 mb-8 animate-stagger-in" style={{ animationDelay: '0s' }}>
                 <div>
                     <h1 className="text-2xl font-bold text-white">Goals</h1>
                     <p className="text-text-muted mt-1">Tetapkan dan lacak target keuangan Anda.</p>
@@ -85,7 +85,7 @@ export default function Goals() {
                     onAction={handleAddGoal}
                 />
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 animate-stagger-in" style={{ animationDelay: '0.1s' }}>
                     {goals.map((goal) => {
                         const percentage = calculatePercentage(goal.currentAmount, goal.targetAmount);
                         const remaining = goal.targetAmount - goal.currentAmount;

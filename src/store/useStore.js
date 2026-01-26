@@ -51,6 +51,7 @@ const initialState = {
     budgets: [],
     goals: [],
     subscriptions: [],
+    debts: [],
     notifications: [],
     user: {
         name: 'User',
@@ -725,6 +726,46 @@ export const useStore = create(
                         return dueDate >= now && dueDate <= futureDate;
                     })
                     .sort((a, b) => new Date(a.nextDueDate) - new Date(b.nextDueDate));
+            },
+
+            // ==================== DEBT ACTIONS ====================
+            addDebt: (debt) => {
+                const newDebt = {
+                    id: generateId(),
+                    createdAt: now(),
+                    status: 'unpaid', // unpaid, paid
+                    ...debt,
+                };
+                set((state) => ({
+                    debts: [...state.debts, newDebt],
+                }));
+                get().triggerAutoSync();
+                return newDebt;
+            },
+
+            updateDebt: (id, updates) => {
+                set((state) => ({
+                    debts: state.debts.map((d) =>
+                        d.id === id ? { ...d, ...updates } : d
+                    ),
+                }));
+                get().triggerAutoSync();
+            },
+
+            deleteDebt: (id) => {
+                set((state) => ({
+                    debts: state.debts.filter((d) => d.id !== id),
+                }));
+                get().triggerAutoSync();
+            },
+
+            markDebtPaid: (id) => {
+                set((state) => ({
+                    debts: state.debts.map((d) =>
+                        d.id === id ? { ...d, status: 'paid', paidAt: now() } : d
+                    ),
+                }));
+                get().triggerAutoSync();
             },
 
             // ==================== SETTINGS ACTIONS ====================

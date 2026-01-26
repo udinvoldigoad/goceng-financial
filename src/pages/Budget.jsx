@@ -68,7 +68,7 @@ export default function Budget() {
     return (
         <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-8">
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-8 animate-stagger-in" style={{ animationDelay: '0s' }}>
                 <div className="flex flex-col gap-2">
                     <h1 className="text-xl md:text-2xl font-bold text-white">Anggaran</h1>
                     <div className="flex items-center gap-4">
@@ -102,7 +102,7 @@ export default function Budget() {
 
             {/* Summary Card */}
             {budgetsWithSpent.length > 0 && (
-                <div className="bg-surface-dark border border-border-dark rounded-2xl p-4 md:p-6 mb-8">
+                <div className="bg-surface-dark border border-border-dark rounded-2xl p-4 md:p-6 mb-8 animate-stagger-in" style={{ animationDelay: '0.1s' }}>
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-bold text-white text-sm md:text-base">Ringkasan {formatMonth(selectedMonth)}</h3>
                         <span className={`text-xs md:text-sm font-bold ${totalSpent > totalBudget ? 'text-red-400' : 'text-green-400'}`}>
@@ -138,7 +138,7 @@ export default function Budget() {
                     onAction={handleAddBudget}
                 />
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 animate-stagger-in" style={{ animationDelay: '0.2s' }}>
                     {budgetsWithSpent.map((budget) => {
                         const category = getCategoryById(budget.category);
                         return (

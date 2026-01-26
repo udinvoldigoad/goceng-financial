@@ -26,11 +26,24 @@ export const INCOME_CATEGORIES = [
 export const ALL_CATEGORIES = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
 
 export const WALLET_TYPES = [
-    { id: 'bank', name: 'Rekening Bank', icon: 'account_balance', color: 'blue' },
+    { id: 'bank', name: 'Bank', icon: 'account_balance', color: 'blue' },
     { id: 'ewallet', name: 'E-Wallet', icon: 'account_balance_wallet', color: 'cyan' },
     { id: 'cash', name: 'Tunai', icon: 'payments', color: 'green' },
-    { id: 'savings', name: 'Tabungan', icon: 'savings', color: 'orange' },
-    { id: 'investment', name: 'Investasi', icon: 'trending_up', color: 'purple' },
+    { id: 'crypto', name: 'Kripto', icon: 'currency_bitcoin', color: 'orange' },
+    { id: 'stocks', name: 'Saham', icon: 'trending_up', color: 'blue' },
+    { id: 'gold', name: 'Emas', icon: 'diamond', color: 'yellow' },
+    { id: 'silver', name: 'Perak', icon: 'diamond', color: 'gray' },
+];
+
+export const WALLET_COLORS = [
+    { id: 'blue', color: '#3B82F6' },
+    { id: 'green', color: '#22C55E' },
+    { id: 'yellow', color: '#EAB308' },
+    { id: 'purple', color: '#A855F7' },
+    { id: 'red', color: '#EF4444' },
+    { id: 'cyan', color: '#06B6D4' },
+    { id: 'pink', color: '#EC4899' },
+    { id: 'orange', color: '#F97316' },
 ];
 
 export const ASSET_CATEGORIES = [
@@ -64,4 +77,13 @@ export function getCategoryById(categoryId) {
  */
 export function getWalletTypeById(typeId) {
     return WALLET_TYPES.find(t => t.id === typeId);
+}
+
+/**
+ * Get wallet color by ID
+ * @param {string} colorId 
+ * @returns {Object|undefined}
+ */
+export function getWalletColorById(colorId) {
+    return WALLET_COLORS.find(c => c.id === colorId);
 }
