@@ -1,18 +1,50 @@
 @import "tailwindcss";
 
 @theme {
+  /* Blue Theme (Original) */
   --color-primary: #3399FF;
   --color-primary-hover: #2577cc;
+  --color-primary-dark: #1a5a99;
+
+  /* Backgrounds */
   --color-background-light: #f6f8f8;
-  --color-background-dark: #0f1923;
-  --color-surface-dark: #18282f;
-  --color-surface-highlight: #20323a;
-  --color-sidebar-bg: #0B161B;
-  --color-sidebar-card-bg: #152228;
+  --color-background-dark: #121212;
+  --color-surface-dark: #1E1E1E;
+  --color-surface-highlight: #2A2A2A;
+
+  /* Sidebar */
+  --color-sidebar-bg: #1E1E1E;
+  --color-sidebar-card-bg: #2A2A2A;
+
+  /* Text */
   --color-text-main: #f0f4f6;
-  --color-text-muted: #8ca3ad;
-  --color-border-dark: #1e343d;
-  --font-family-display: 'Inter', sans-serif;
+  --color-text-muted: #888888;
+
+  /* Borders */
+  --color-border-dark: #2A2A2A;
+
+  /* Accent Colors */
+  --color-accent-green: #22C55E;
+  --color-accent-red: #EF4444;
+  --color-accent-blue: #3B82F6;
+  --color-accent-yellow: #EAB308;
+
+  /* Fonts */
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --font-display: "Space Grotesk", sans-serif;
+}
+
+/* Apply Space Grotesk font globally */
+html,
+body,
+* {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Override for icons */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined" !important;
 }
 
 /* Smooth scroll for all platforms */
@@ -21,20 +53,16 @@ html {
 }
 
 /* Fix mobile scroll and navbar issues */
-html, body {
+html,
+body {
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Smooth scroll for scrollable containers */
-* {
-  scroll-behavior: smooth;
-}
-
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -43,9 +71,102 @@ html, body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-surface-highlight);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2c424d;
+  background: #333333;
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(51, 153, 255, 0.3);
+  color: #fff;
+}
+
+/* Navbar scroll effect - blur & transparent */
+.navbar-scrolled {
+  background-color: rgba(18, 18, 18, 0.7) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border-bottom-color: rgba(42, 42, 42, 0.5) !important;
+}
+
+/* Page transition animation */
+@keyframes page-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-in {
+  animation: page-in 0.4s ease-out forwards;
+}
+
+/* Staggered item animation */
+@keyframes stagger-in {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger-in {
+  opacity: 0;
+  animation: stagger-in 0.5s ease-out forwards;
+}
+
+/* Modal animation */
+@keyframes modal-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-in {
+  animation: modal-in 0.25s ease-out forwards;
+}
+
+/* Slide up animation for mobile menus */
+@keyframes slide-up {
+  0% {
+    transform: translateY(100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+/* Safe area padding for mobile bottom nav */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Add padding to main content when mobile nav is visible */
+@media (max-width: 767px) {
+  .mobile-content-padding {
+    padding-bottom: 80px;
+  }
 }
