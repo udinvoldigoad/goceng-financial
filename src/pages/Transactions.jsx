@@ -175,14 +175,14 @@ export default function Transactions() {
     return (
         <div className="relative max-w-6xl mx-auto">
             {/* Header */}
-            <header className="flex justify-between items-center mb-8 animate-stagger-in" style={{ animationDelay: '0s' }}>
+            <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 md:mb-8 animate-stagger-in" style={{ animationDelay: '0s' }}>
                 <div>
-                    <h2 className="text-2xl font-bold text-white">Riwayat Transaksi</h2>
-                    <p className="text-text-muted mt-1">Kelola dan pantau arus kas keuanganmu.</p>
+                    <h2 className="text-xl md:text-2xl font-bold text-white">Riwayat Transaksi</h2>
+                    <p className="text-text-muted text-sm md:text-base mt-1">Kelola dan pantau arus kas keuanganmu.</p>
                 </div>
                 <button
                     onClick={handleAddTransaction}
-                    className="flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold tracking-wide"
+                    className="hidden md:flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold tracking-wide"
                 >
                     <span className="material-symbols-outlined text-[18px]">add</span>
                     <span>Tambah Transaksi</span>
@@ -240,10 +240,10 @@ export default function Transactions() {
                 </div>
 
                 {/* Quick Date Filters */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
                     <button
                         onClick={() => setDateFilter('all')}
-                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'all'
+                        className={`px-4 md:px-5 py-2.5 md:py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${dateFilter === 'all'
                             ? 'bg-primary text-white'
                             : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
                             }`}
@@ -252,7 +252,7 @@ export default function Transactions() {
                     </button>
                     <button
                         onClick={() => setDateFilter('today')}
-                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'today'
+                        className={`px-4 md:px-5 py-2.5 md:py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${dateFilter === 'today'
                             ? 'bg-primary text-white'
                             : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
                             }`}
@@ -261,31 +261,31 @@ export default function Transactions() {
                     </button>
                     <button
                         onClick={() => setDateFilter('week')}
-                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'week'
+                        className={`px-4 md:px-5 py-2.5 md:py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${dateFilter === 'week'
                             ? 'bg-primary text-white'
                             : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
                             }`}
                     >
-                        This Week
+                        Week
                     </button>
                     <button
                         onClick={() => setDateFilter('month')}
-                        className={`px-5 py-3 rounded-xl text-sm font-medium transition-all ${dateFilter === 'month'
+                        className={`px-4 md:px-5 py-2.5 md:py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${dateFilter === 'month'
                             ? 'bg-primary text-white'
                             : 'bg-surface-dark text-text-muted hover:text-white border border-border-dark'
                             }`}
                     >
-                        This Month
+                        Month
                     </button>
 
                     {/* Filter Dropdown Button */}
-                    <div className="relative">
+                    <div className="relative flex-shrink-0">
                         <button
                             onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium bg-surface-dark text-text-muted hover:text-white border border-border-dark transition-all"
+                            className="flex items-center gap-2 px-4 md:px-5 py-2.5 md:py-3 rounded-xl text-sm font-medium bg-surface-dark text-text-muted hover:text-white border border-border-dark transition-all whitespace-nowrap"
                         >
                             <span className="material-symbols-outlined text-[18px]">filter_list</span>
-                            <span>Filter</span>
+                            <span className="hidden md:inline">Filter</span>
                             <span className="material-symbols-outlined text-[16px]">
                                 {showFilterDropdown ? 'expand_less' : 'expand_more'}
                             </span>
@@ -293,76 +293,80 @@ export default function Transactions() {
 
                         {/* Filter Dropdown */}
                         {showFilterDropdown && (
-                            <div className="absolute right-0 top-14 w-80 bg-surface-dark border border-border-dark rounded-xl shadow-2xl p-4 z-50 space-y-3">
-                                <div>
-                                    <label className="block text-xs text-text-muted mb-2">Kategori</label>
-                                    <select
-                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
-                                        value={filterCategory}
-                                        onChange={(e) => setFilterCategory(e.target.value)}
-                                    >
-                                        <option value="">Semua Kategori</option>
-                                        {allCategories.map(cat => (
-                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                            <>
+                                {/* Backdrop to close dropdown */}
+                                <div className="fixed inset-0 z-[60]" onClick={() => setShowFilterDropdown(false)} />
+                                <div className="fixed left-4 right-4 top-48 md:absolute md:left-auto md:right-0 md:top-14 md:w-80 bg-surface-dark border border-border-dark rounded-xl shadow-2xl p-4 z-[70] space-y-3 max-h-[50vh] overflow-y-auto">
+                                    <div>
+                                        <label className="block text-xs text-text-muted mb-2">Kategori</label>
+                                        <select
+                                            className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                            value={filterCategory}
+                                            onChange={(e) => setFilterCategory(e.target.value)}
+                                        >
+                                            <option value="">Semua Kategori</option>
+                                            {allCategories.map(cat => (
+                                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                                <div>
-                                    <label className="block text-xs text-text-muted mb-2">Tipe</label>
-                                    <select
-                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
-                                        value={filterType}
-                                        onChange={(e) => setFilterType(e.target.value)}
-                                    >
-                                        <option value="">Semua Tipe</option>
-                                        <option value="income">Pemasukan</option>
-                                        <option value="expense">Pengeluaran</option>
-                                        <option value="transfer">Transfer</option>
-                                    </select>
-                                </div>
+                                    <div>
+                                        <label className="block text-xs text-text-muted mb-2">Tipe</label>
+                                        <select
+                                            className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                            value={filterType}
+                                            onChange={(e) => setFilterType(e.target.value)}
+                                        >
+                                            <option value="">Semua Tipe</option>
+                                            <option value="income">Pemasukan</option>
+                                            <option value="expense">Pengeluaran</option>
+                                            <option value="transfer">Transfer</option>
+                                        </select>
+                                    </div>
 
-                                <div>
-                                    <label className="block text-xs text-text-muted mb-2">Wallet</label>
-                                    <select
-                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
-                                        value={filterWallet}
-                                        onChange={(e) => setFilterWallet(e.target.value)}
-                                    >
-                                        <option value="">Semua Wallet</option>
-                                        {wallets.map(w => (
-                                            <option key={w.id} value={w.id}>{w.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                    <div>
+                                        <label className="block text-xs text-text-muted mb-2">Wallet</label>
+                                        <select
+                                            className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                            value={filterWallet}
+                                            onChange={(e) => setFilterWallet(e.target.value)}
+                                        >
+                                            <option value="">Semua Wallet</option>
+                                            {wallets.map(w => (
+                                                <option key={w.id} value={w.id}>{w.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                                <div>
-                                    <label className="block text-xs text-text-muted mb-2">Urutkan</label>
-                                    <select
-                                        className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
-                                        value={sortOrder}
-                                        onChange={(e) => setSortOrder(e.target.value)}
-                                    >
-                                        <option value="newest">Terbaru</option>
-                                        <option value="oldest">Terlama</option>
-                                        <option value="highest">Tertinggi</option>
-                                        <option value="lowest">Terendah</option>
-                                    </select>
-                                </div>
+                                    <div>
+                                        <label className="block text-xs text-text-muted mb-2">Urutkan</label>
+                                        <select
+                                            className="w-full px-3 py-2.5 rounded-lg bg-surface-highlight border border-border-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm text-white"
+                                            value={sortOrder}
+                                            onChange={(e) => setSortOrder(e.target.value)}
+                                        >
+                                            <option value="newest">Terbaru</option>
+                                            <option value="oldest">Terlama</option>
+                                            <option value="highest">Tertinggi</option>
+                                            <option value="lowest">Terendah</option>
+                                        </select>
+                                    </div>
 
-                                <button
-                                    onClick={() => {
-                                        setFilterCategory('');
-                                        setFilterType('');
-                                        setFilterWallet('');
-                                        setSortOrder('newest');
-                                        setShowFilterDropdown(false);
-                                    }}
-                                    className="w-full py-2 text-sm text-primary hover:text-primary/80 font-medium"
-                                >
-                                    Reset Semua Filter
-                                </button>
-                            </div>
+                                    <button
+                                        onClick={() => {
+                                            setFilterCategory('');
+                                            setFilterType('');
+                                            setFilterWallet('');
+                                            setSortOrder('newest');
+                                            setShowFilterDropdown(false);
+                                        }}
+                                        className="w-full py-2 text-sm text-primary hover:text-primary/80 font-medium"
+                                    >
+                                        Reset Semua Filter
+                                    </button>
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>
