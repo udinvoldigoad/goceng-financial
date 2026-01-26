@@ -80,6 +80,23 @@ export default function Dashboard() {
         return { level: 1, title: 'Beginner', nextThreshold: 100000 };
     };
 
+    // Get icon based on level
+    const getLevelIcon = (level) => {
+        const icons = {
+            1: { icon: 'eco', color: 'text-gray-400', bg: 'bg-gray-500/20' },           // Beginner - seedling
+            2: { icon: 'rocket_launch', color: 'text-blue-400', bg: 'bg-blue-500/20' }, // Starter - rocket
+            3: { icon: 'savings', color: 'text-green-400', bg: 'bg-green-500/20' },     // Saver - piggy bank
+            4: { icon: 'construction', color: 'text-yellow-400', bg: 'bg-yellow-500/20' }, // Builder - construction
+            5: { icon: 'trending_up', color: 'text-lime-400', bg: 'bg-lime-500/20' },   // Growing - growth
+            6: { icon: 'apartment', color: 'text-cyan-400', bg: 'bg-cyan-500/20' },     // Established - building
+            7: { icon: 'school', color: 'text-indigo-400', bg: 'bg-indigo-500/20' },    // Intermediate - graduate
+            8: { icon: 'military_tech', color: 'text-purple-400', bg: 'bg-purple-500/20' }, // Advanced - medal
+            9: { icon: 'diamond', color: 'text-pink-400', bg: 'bg-pink-500/20' },       // Expert - diamond
+            10: { icon: 'workspace_premium', color: 'text-amber-400', bg: 'bg-amber-500/20' }, // Master - crown
+        };
+        return icons[level] || icons[1];
+    };
+
     const levelData = calculateLevel(totalAssets);
     const progressToNext = levelData.nextThreshold
         ? Math.min((totalAssets / levelData.nextThreshold) * 100, 100)
@@ -176,8 +193,8 @@ export default function Dashboard() {
                     </div>
 
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-green-400 text-[16px]">person</span>
+                        <div className={`w-8 h-8 rounded-full ${getLevelIcon(levelData.level).bg} flex items-center justify-center`}>
+                            <span className={`material-symbols-outlined ${getLevelIcon(levelData.level).color} text-[16px]`}>{getLevelIcon(levelData.level).icon}</span>
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-white">{levelData.title}</p>
