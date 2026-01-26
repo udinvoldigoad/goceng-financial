@@ -7,7 +7,7 @@ import useStore from '../store/useStore';
 import { formatRelativeDate } from '../services/formatters';
 
 export default function DashboardLayout() {
-    const { notifications, markAllNotificationsRead, clearNotifications, user, auth, openLoginModal, settings, toggleTheme, signOut } = useStore();
+    const { notifications, markAllNotificationsRead, clearNotifications, user, auth, openLoginModal, signOut } = useStore();
     const navigate = useNavigate();
     const [showNotifications, setShowNotifications] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
@@ -139,16 +139,6 @@ export default function DashboardLayout() {
                                     </div>
                                 )}
                             </div>
-
-                            {/* Theme Toggle */}
-                            <button
-                                onClick={toggleTheme}
-                                className="flex items-center justify-center w-10 h-10 rounded-lg text-text-muted hover:bg-surface-dark hover:text-white transition-colors"
-                            >
-                                <span className="material-symbols-outlined">
-                                    {settings.theme === 'dark' ? 'light_mode' : 'dark_mode'}
-                                </span>
-                            </button>
 
                             {/* User Profile Dropdown */}
                             <div className="relative" ref={userDropdownRef}>
