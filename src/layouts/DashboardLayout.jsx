@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import MobileNav from '../components/MobileNav';
+import Logo from '../components/Logo';
 import PageTransition from '../components/ui/PageTransition';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 import useStore from '../store/useStore';
 import { formatRelativeDate } from '../services/formatters';
 
@@ -11,6 +13,7 @@ export default function DashboardLayout() {
     const navigate = useNavigate();
     const [showNotifications, setShowNotifications] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const notificationRef = useRef(null);
     const userDropdownRef = useRef(null);
@@ -55,8 +58,14 @@ export default function DashboardLayout() {
 
     const handleLogout = async () => {
         await signOut();
+        setShowLogoutConfirm(false);
         setShowUserDropdown(false);
         navigate('/');
+    };
+
+    const handleLogoutClick = () => {
+        setShowUserDropdown(false);
+        setShowLogoutConfirm(true);
     };
 
     return (
@@ -71,10 +80,8 @@ export default function DashboardLayout() {
                         {/* Left - Logo for mobile, empty for desktop (sidebar has logo) */}
                         <div className="flex items-center gap-4">
                             {/* Logo for mobile */}
-                            <div className="md:hidden flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                                    <span className="text-primary font-bold text-lg">G</span>
-                                </div>
+                            <div className="md:hidden">
+                                <Logo className="w-8 h-8" />
                             </div>
                         </div>
 
@@ -198,7 +205,7 @@ export default function DashboardLayout() {
                                             </button>
                                             <div className="border-t border-border-dark my-1"></div>
                                             <button
-                                                onClick={handleLogout}
+                                                onClick={handleLogoutClick}
                                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-red-400 hover:bg-red-500/10 transition-colors"
                                             >
                                                 <span className="material-symbols-outlined text-[20px]">logout</span>
@@ -222,6 +229,17 @@ export default function DashboardLayout() {
 
             {/* Mobile Bottom Navigation */}
             <MobileNav />
+
+            {/* Logout Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={showLogoutConfirm}
+                onClose={() => setShowLogoutConfirm(false)}
+                onConfirm={handleLogout}
+                title="Konfirmasi Logout"
+                message="Apakah Anda yakin ingin keluar dari akun?"
+                confirmText="Logout"
+                confirmVariant="danger"
+            />
         </div>
     );
 }
